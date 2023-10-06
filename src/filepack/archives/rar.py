@@ -7,7 +7,11 @@ from filepack.archives.exceptions import (
     FailedToAddNewMemberToArchive,
     FailedToRemoveArchiveMember,
 )
-from filepack.archives.models import AbstractArchive, ArchiveMember
+from filepack.archives.models import (
+    AbstractArchive,
+    ArchiveMember,
+    UnknownFileType,
+)
 from filepack.utils import format_date_tuple
 
 
@@ -34,6 +38,7 @@ class RarArchive(AbstractArchive):
                     name=rar_info.filename,
                     size=rar_info.file_size,
                     mtime=format_date_tuple(rar_info.date_time),
+                    type=UnknownFileType(),
                 )
                 for rar_info in rar_file.infolist()
             ]

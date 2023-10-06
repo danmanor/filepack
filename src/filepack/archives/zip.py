@@ -3,8 +3,12 @@ import zipfile
 from pathlib import Path
 
 from filepack.archives.exceptions import ArchiveMemberDoesNotExist
-from filepack.archives.models import AbstractArchive, ArchiveMember
-from filepack.utils import format_date_tuple
+from filepack.archives.models import (
+    AbstractArchive,
+    ArchiveMember,
+    UnknownFileType,
+)
+from filepack.utils import format_date_tuple, get_file_type_extension
 
 
 class ZipArchive(AbstractArchive):
@@ -30,6 +34,9 @@ class ZipArchive(AbstractArchive):
                     name=zip_info.filename,
                     size=zip_info.file_size,
                     mtime=format_date_tuple(zip_info.date_time),
+                    type=self._get_zip_info_file_type(
+                        zip_info=zip_info
+                    ),
                 )
                 for zip_info in zip_file.infolist()
             ]
@@ -73,8 +80,22 @@ class ZipArchive(AbstractArchive):
 
             new_archive_path.rename(self._path)
 
+    def _get_zip_info_file_type(
+        self, zip_info: zipfile.ZipInfo
+    ) -> str | UnknownFileType:
+        with tempfile.NamedTemporaryFile() as temporary_file:
+            temporary_file_path = (
+                Path(temporary_file) / zip_info.filename
+            )
+            self.extract_member(
+                member_name=zip_info.filename,
+                target_path=temporary_file_path,
+            )
 
-"""     @staticmethod
-    def _get_zip_info_content(zip_info: zipfile.ZipInfo) -> bytes:
-        with open(zip_info.filename, "r") as file:
-            return Path(file).read_bytes() """
+            try:
+                type = get_file_type_extension(
+                    path=temporary_file_path
+                )
+                return type if type is not None else UnknownFileType()
+            except Exception:
+                return UnknownFileType()

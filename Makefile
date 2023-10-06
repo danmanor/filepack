@@ -1,12 +1,9 @@
-.PHONY: lint format check-format type-check test mypy
+.PHONY: lint format check-format type-check test mypy install-lint
 
 all: lint format
 
 install-lint:
 	pip install flake8 black mypy isort
-
-install-test:
-	pip install tox
 
 lint: check-format type-check
 	@echo "Linting code with flake8..."

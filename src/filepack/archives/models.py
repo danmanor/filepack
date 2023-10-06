@@ -20,11 +20,22 @@ class ArchiveType(Enum):
     SEVEN_ZIP = SEVEN_ZIP_SUFFIX
 
 
+class UnknownFileType:
+    pass
+
+
 class ArchiveMember:
-    def __init__(self, name: str, size: int, mtime: str) -> None:
+    def __init__(
+        self,
+        name: str,
+        size: int,
+        mtime: str,
+        type: str | UnknownFileType,
+    ) -> None:
         self.name = name
         self.size = size
         self.mtime = mtime
+        self.type = type
 
 
 class AbstractArchive(ABC):
@@ -73,6 +84,7 @@ class AbstractArchive(ABC):
                 "name": member.name,
                 "mtime": member.mtime,
                 "size": member.size,
+                "type": member.type,
             }
             for member in self.get_members()
         ]

@@ -4,7 +4,12 @@ from datetime import datetime
 from pathlib import Path
 
 from filepack.archives.exceptions import ArchiveMemberDoesNotExist
-from filepack.archives.models import AbstractArchive, ArchiveMember
+from filepack.archives.models import (
+    AbstractArchive,
+    ArchiveMember,
+    UnknownFileType,
+)
+from filepack.utils import get_file_type_extension
 
 
 class TarArchive(AbstractArchive):
@@ -34,6 +39,9 @@ class TarArchive(AbstractArchive):
                     mtime=datetime.utcfromtimestamp(
                         tar_info.mtime
                     ).strftime("%a, %d %b %Y %H:%M:%S UTC"),
+                    type=self._get_tar_info_file_type(
+                        tar_info=tar_info
+                    ),
                 )
                 for tar_info in tar_file.getmembers()
             ]
@@ -75,3 +83,21 @@ class TarArchive(AbstractArchive):
                     new_file.add(name=file, arcname=file.name)
 
             new_archive_path.rename(self._path)
+
+    def _get_tar_info_file_type(
+        self, tar_info: tarfile.TarInfo
+    ) -> str | UnknownFileType:
+        with tempfile.NamedTemporaryFile() as temporary_file:
+            temporary_file_path = Path(temporary_file) / tar_info.name
+            self.extract_member(
+                member_name=tar_info.name,
+                target_path=temporary_file_path,
+            )
+
+            try:
+                type = get_file_type_extension(
+                    path=temporary_file_path
+                )
+                return type if type is not None else UnknownFileType()
+            except Exception:
+                return UnknownFileType()

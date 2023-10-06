@@ -4,7 +4,12 @@ from pathlib import Path
 import py7zr
 
 from filepack.archives.exceptions import ArchiveMemberDoesNotExist
-from filepack.archives.models import AbstractArchive, ArchiveMember
+from filepack.archives.models import (
+    AbstractArchive,
+    ArchiveMember,
+    UnknownFileType,
+)
+from filepack.utils import get_file_type_extension
 
 
 class SevenZipArchive(AbstractArchive):
@@ -36,6 +41,9 @@ class SevenZipArchive(AbstractArchive):
                     name=seven_zip_info.filename,
                     size=seven_zip_info.compressed,
                     mtime=seven_zip_info.creationtime,
+                    type=self._get_seven_zip_info_file_type(
+                        seven_zip_info=seven_zip_info
+                    ),
                 )
                 for seven_zip_info in seven_zip_file.list()
             ]
@@ -82,3 +90,23 @@ class SevenZipArchive(AbstractArchive):
                     new_file.write(file=file, arcname=file.name)
 
             new_archive_path.rename(self._path)
+
+    def _get_seven_zip_info_file_type(
+        self, seven_zip_info: py7zr.FileInfo
+    ) -> str | UnknownFileType:
+        with tempfile.NamedTemporaryFile() as temporary_file:
+            temporary_file_path = (
+                Path(temporary_file) / seven_zip_info.filename
+            )
+            self.extract_member(
+                member_name=seven_zip_info.filename,
+                target_path=temporary_file_path,
+            )
+
+            try:
+                type = get_file_type_extension(
+                    path=temporary_file_path
+                )
+                return type if type is not None else UnknownFileType()
+            except Exception:
+                return UnknownFileType()
