@@ -3,13 +3,13 @@ requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "archive"
+name = "filepack"
 version = "0.1.0"
 description = ""
 authors = [
     { name = "Dan Manor", email = "danmanor11@gmail.com" }
 ]
-keywords = ["archive"]
+keywords = ["file", "pack", "unpack", "archive", "compression", "compressor"]
 license = { file = "LICENSE" }
 readme = "README.md"
 classifiers = [
@@ -24,12 +24,13 @@ classifiers = [
 "Bug Tracker" = "https://github.com/danmanor/archive/issues"
 
 [options]
-packages = ["archive"]
+packages = ["filepack"]
 install_requires = [
     "py7zr>=0.20.6",
     "tabulate==0.9.0",
     "rarfile==4.1",
     "pytz==2023.3.post1",
+    "lz4==4.3.2",
 ]
 python_requires = ">=3.10"
 
@@ -44,6 +45,7 @@ dev = [
 [tool.mypy]
 python_version = "3.10"
 ignore_missing_imports = true
+show_error_codes = true
 
 [tool.black]
 line-length = 70
@@ -52,6 +54,7 @@ include = '\.pyi?$'
 
 [tool.isort]
 profile = "black"
+line_length = 70
 
 [tool.flake8]
 ignore = ['E501']

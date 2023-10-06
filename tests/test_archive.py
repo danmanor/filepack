@@ -1,22 +1,24 @@
 from pathlib import Path
-from archive.archive import Archive
 import pytest
-from archive.exceptions import (
+
+from filepack.archive import Archive
+from filepack.archives.exceptions import (
     FailedToAddNewMemberToArchive,
     FailedToGetArchiveMembers
 )
 
+
 @pytest.fixture
-def file(tmp_path):
+def file(tmp_path: Path) -> Path:
     new_file_path = tmp_path / "new_file.txt"
     with open(new_file_path, "w") as new_file:
         new_file.write("Hello World !")
     
     return new_file_path
 
-ARCHIVES_PATH = Path(__file__).parent / "archive_examples"
+ARCHIVES_PATH = Path(__file__).parent / "archives" / "archive_examples"
 
-def test_tar_archive(tmp_path, file):
+def test_tar_archive(tmp_path: Path, file: Path):
     new_tar_path = tmp_path / "new_tar.tar"
 
     arc = Archive(new_tar_path)

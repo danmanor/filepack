@@ -5,19 +5,19 @@ from typing import Optional
 
 from tabulate import tabulate
 
-from archive.exceptions import (
-    FailedToExtractArchiveMembers,
-    FailedToGetArchiveMember,
-    FailedToRemoveArchiveMembers,
+from filepack.archives.consts import (
+    RAR_SUFFIX,
+    SEVEN_ZIP_SUFFIX,
+    TAR_SUFFIX,
+    ZIP_SUFFIX,
 )
-from archive.utils import reraise_as
 
 
 class ArchiveType(Enum):
-    TAR = "tar"
-    ZIP = "zip"
-    RAR = "rar"
-    SEVEN_ZIP = "7z"
+    TAR = TAR_SUFFIX
+    ZIP = ZIP_SUFFIX
+    RAR = RAR_SUFFIX
+    SEVEN_ZIP = SEVEN_ZIP_SUFFIX
 
 
 class ArchiveMember:
@@ -28,11 +28,6 @@ class ArchiveMember:
 
 
 class AbstractArchive(ABC):
-    @property
-    @abstractmethod
-    def path(self) -> Path:
-        pass
-
     @abstractmethod
     def extract_member(
         self,
@@ -53,19 +48,16 @@ class AbstractArchive(ABC):
     def remove_member(self, member_name: str):
         pass
 
-    @reraise_as(FailedToExtractArchiveMembers)
     def extract_all(self, target_path: str | Path):
         for member in self.get_members():
             self.extract_member(
                 member_name=member.name, target_path=target_path
             )
 
-    @reraise_as(FailedToRemoveArchiveMembers)
     def remove_all(self):
         for member in self.get_members():
             self.remove_member(member=member)
 
-    @reraise_as(FailedToGetArchiveMember)
     def get_member(self, member_name: str) -> Optional[ArchiveMember]:
         for member in self.get_members():
             if member.name == member_name:

@@ -1,10 +1,8 @@
 import pytest
 import zipfile
-from archive.archives.zip import ZipArchive
-from archive.exceptions import (
-    FailedToExtractArchiveMember,
-    FailedToRemoveArchiveMember,
-    FailedToAddNewMemberToArchive,
+from filepack.archives.zip import ZipArchive
+from filepack.archives.exceptions import (
+    ArchiveMemberDoesNotExist
 )
 from pathlib import Path
 
@@ -31,10 +29,10 @@ def test_extract_member(zip_file: Path, tmp_path: Path):
 
 
 def test_extract_non_existent_member(zip_file: Path, tmp_path: Path):
-    tar_archive = ZipArchive(path=zip_file)
+    zip_archive = ZipArchive(path=zip_file)
     
-    with pytest.raises(FailedToExtractArchiveMember):
-        tar_archive.extract_member("nonexistent.txt", tmp_path)
+    with pytest.raises(ArchiveMemberDoesNotExist):
+        zip_archive.extract_member("nonexistent.txt", tmp_path)
 
 
 def test_get_members(zip_file: Path):
@@ -61,7 +59,7 @@ def test_add_non_existent_member(zip_file: Path, tmp_path: Path):
 
     non_existent_file = tmp_path / "nonexistentfile.txt"
 
-    with pytest.raises(FailedToAddNewMemberToArchive):
+    with pytest.raises(FileNotFoundError):
         tar_archive.add_member(member_path=non_existent_file)
 
 
@@ -86,6 +84,6 @@ def test_remove_member(zip_file: Path, tmp_path: Path):
 def test_remove_non_existent_member(zip_file: Path):
     tar_archive = ZipArchive(path=zip_file)
 
-    with pytest.raises(FailedToRemoveArchiveMember):
+    with pytest.raises(ArchiveMemberDoesNotExist):
         tar_archive.remove_member("nonexistent.txt")
 

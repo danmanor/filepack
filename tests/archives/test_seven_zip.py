@@ -1,12 +1,10 @@
 import pytest
 import py7zr
 from pathlib import Path
-from archive.exceptions import (
-    FailedToExtractArchiveMember,
-    FailedToAddNewMemberToArchive,
-    FailedToRemoveArchiveMember
+from filepack.archives.exceptions import (
+    ArchiveMemberDoesNotExist
 )
-from archive.archives.seven_zip import SevenZipArchive
+from filepack.archives.seven_zip import SevenZipArchive
 
 
 @pytest.fixture
@@ -30,7 +28,7 @@ def test_extract_member(seven_zip_file: Path, tmp_path: Path):
 def test_extract_non_existent_member(seven_zip_file: Path, tmp_path: Path):
     archive = SevenZipArchive(path=seven_zip_file)
     
-    with pytest.raises(FailedToExtractArchiveMember):
+    with pytest.raises(ArchiveMemberDoesNotExist):
         archive.extract_member("nonexistent.txt", tmp_path)
 
 
@@ -60,7 +58,7 @@ def test_add_non_existent_member(seven_zip_file: Path, tmp_path: Path):
 
     non_existent_file = tmp_path / "nonexistentfile.txt"
     
-    with pytest.raises(FailedToAddNewMemberToArchive):
+    with pytest.raises(FileNotFoundError):
         archive.add_member(member_path=non_existent_file)
 
 
@@ -81,5 +79,5 @@ def test_remove_member(seven_zip_file: Path, tmp_path: Path):
 def test_remove_non_existent_member(seven_zip_file: Path):
     archive = SevenZipArchive(path=seven_zip_file)
 
-    with pytest.raises(FailedToRemoveArchiveMember):
+    with pytest.raises(ArchiveMemberDoesNotExist):
         archive.remove_member("nonexistent.txt")

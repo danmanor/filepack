@@ -1,17 +1,17 @@
 import pytest
 from pathlib import Path
 
-from archive.exceptions import (
-    FailedToExtractArchiveMember,
+from filepack.archives.exceptions import (
+    ArchiveMemberDoesNotExist,
     FailedToAddNewMemberToArchive,
     FailedToRemoveArchiveMember
 )
-from archive.archives.rar import RarArchive
+from filepack.archives.rar import RarArchive
 
 @pytest.fixture
 def rar_file(tmp_path: Path):
-    current_file_dir = Path(__file__).parent.parent
-    RAR_SAMPLE_PATH = current_file_dir / "archive_examples/archive.rar"
+    current_file_dir = Path(__file__).parent
+    RAR_SAMPLE_PATH = current_file_dir / "archive_examples" / "archive.rar"
     new_rar_path = tmp_path / "test.rar"
 
     with open(RAR_SAMPLE_PATH, "rb") as rar_file:
@@ -32,7 +32,7 @@ def test_extract_member(rar_file: Path, tmp_path: Path):
 def test_extract_non_existent_member(rar_file: Path, tmp_path: Path):
     archive = RarArchive(path=rar_file)
     
-    with pytest.raises(FailedToExtractArchiveMember):
+    with pytest.raises(ArchiveMemberDoesNotExist):
         archive.extract_member("nonexistent.txt", tmp_path)
 
 

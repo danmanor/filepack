@@ -3,26 +3,17 @@ import tempfile
 from datetime import datetime
 from pathlib import Path
 
-from archive.exceptions import (
-    ArchiveMemberDoesNotExist,
-    FailedToAddNewMemberToArchive,
-    FailedToExtractArchiveMember,
-    FailedToGetArchiveMembers,
-    FailedToRemoveArchiveMember,
-)
-from archive.models import AbstractArchive, ArchiveMember
-from archive.utils import reraise_as
+from filepack.archives.exceptions import ArchiveMemberDoesNotExist
+from filepack.archives.models import AbstractArchive, ArchiveMember
 
 
 class TarArchive(AbstractArchive):
-    def __init__(self, path: Path):
+    def __init__(
+        self,
+        path: Path,
+    ):
         self._path = path
 
-    @property
-    def path(self) -> Path:
-        return self._path
-
-    @reraise_as(FailedToExtractArchiveMember)
     def extract_member(
         self,
         member_name: str,
@@ -31,12 +22,11 @@ class TarArchive(AbstractArchive):
         if self.get_member(member_name=member_name) is None:
             raise ArchiveMemberDoesNotExist()
 
-        with tarfile.open(self.path, "r") as tar_file:
+        with tarfile.open(self._path, "r") as tar_file:
             tar_file.extract(member=member_name, path=target_path)
 
-    @reraise_as(FailedToGetArchiveMembers)
     def get_members(self) -> list[ArchiveMember]:
-        with tarfile.open(self.path, "r") as tar_file:
+        with tarfile.open(self._path, "r") as tar_file:
             return [
                 ArchiveMember(
                     name=tar_info.name,
@@ -48,16 +38,14 @@ class TarArchive(AbstractArchive):
                 for tar_info in tar_file.getmembers()
             ]
 
-    @reraise_as(FailedToAddNewMemberToArchive)
     def add_member(self, member_path: str | Path):
         member_path = Path(member_path)
         if not member_path.exists():
             raise FileNotFoundError()
 
-        with tarfile.open(self.path, "a") as tar_file:
+        with tarfile.open(self._path, "a") as tar_file:
             tar_file.add(name=member_path, arcname=member_path.name)
 
-    @reraise_as(FailedToRemoveArchiveMember)
     def remove_member(self, member_name: str):
 
         if self.get_member(member_name=member_name) is None:
@@ -86,4 +74,4 @@ class TarArchive(AbstractArchive):
                 ) in temporary_directory_members_path.iterdir():
                     new_file.add(name=file, arcname=file.name)
 
-            new_archive_path.rename(self.path)
+            new_archive_path.rename(self._path)

@@ -3,11 +3,9 @@ from tarfile import TarFile, TarInfo
 from pathlib import Path
 from io import BytesIO
 
-from archive.archives.tar import TarArchive
-from archive.exceptions import (
-    FailedToExtractArchiveMember,
-    FailedToRemoveArchiveMember,
-    FailedToAddNewMemberToArchive
+from filepack.archives.tar import TarArchive
+from filepack.archives.exceptions import (
+    ArchiveMemberDoesNotExist
 )
 
 @pytest.fixture
@@ -40,7 +38,7 @@ def test_extract_member(tar_file: Path, tmp_path: Path):
 def test_extract_non_existent_member(tar_file: Path, tmp_path: Path):
     tar_archive = TarArchive(path=tar_file)
     
-    with pytest.raises(FailedToExtractArchiveMember):
+    with pytest.raises(ArchiveMemberDoesNotExist):
         tar_archive.extract_member("nonexistent.txt", tmp_path)
 
 
@@ -74,7 +72,7 @@ def test_add_non_existent_member(tar_file: Path, tmp_path: Path):
 
     non_existent_file = tmp_path / "nonexistentfile.txt"
 
-    with pytest.raises(FailedToAddNewMemberToArchive):
+    with pytest.raises(FileNotFoundError):
         tar_archive.add_member(member_path=non_existent_file)
 
 
@@ -99,6 +97,6 @@ def test_remove_member(tar_file: Path, tmp_path: Path):
 def test_remove_non_existent_member(tar_file: Path):
     tar_archive = TarArchive(path=tar_file)
 
-    with pytest.raises(FailedToRemoveArchiveMember):
+    with pytest.raises(ArchiveMemberDoesNotExist):
         tar_archive.remove_member("nonexistent.txt")
 

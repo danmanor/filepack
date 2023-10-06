@@ -10,22 +10,22 @@ install-test:
 
 lint: check-format type-check
 	@echo "Linting code with flake8..."
-	flake8 src/archive/
+	flake8 src/filepack/
 
 format:
 	@echo "Formatting code with isort..."
-	isort src/archive/
+	isort src/filepack/
 	@echo "Formatting code with Black..."
-	black src/archive/
+	black src/filepack/
 
 check-format:
 	@echo "Checking code format with Black..."
-	isort src/archive/ --check --diff
-	black --check --diff src/archive/
+	isort src/filepack/ --check --diff
+	black --check --diff src/filepack/
 
 type-check:
 	@echo "Type-checking with mypy..."
-	mypy src/archive/
+	mypy src/filepack/
 
 test:
 	@echo "Starting tests..."

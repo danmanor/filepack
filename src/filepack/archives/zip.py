@@ -2,15 +2,9 @@ import tempfile
 import zipfile
 from pathlib import Path
 
-from archive.exceptions import (
-    ArchiveMemberDoesNotExist,
-    FailedToAddNewMemberToArchive,
-    FailedToExtractArchiveMember,
-    FailedToGetArchiveMembers,
-    FailedToRemoveArchiveMember,
-)
-from archive.models import AbstractArchive, ArchiveMember
-from archive.utils import format_date_tuple, reraise_as
+from filepack.archives.exceptions import ArchiveMemberDoesNotExist
+from filepack.archives.models import AbstractArchive, ArchiveMember
+from filepack.utils import format_date_tuple
 
 
 class ZipArchive(AbstractArchive):
@@ -20,20 +14,17 @@ class ZipArchive(AbstractArchive):
     ):
         self._path = path
 
-    @property
-    def path(self) -> Path:
-        return self._path
-
-    @reraise_as(FailedToExtractArchiveMember)
     def extract_member(
         self, member_name: str, target_path: str | Path
     ):
-        with zipfile.ZipFile(file=self.path, mode="r") as zip_file:
+        if self.get_member(member_name=member_name) is None:
+            raise ArchiveMemberDoesNotExist()
+
+        with zipfile.ZipFile(file=self._path, mode="r") as zip_file:
             zip_file.extract(member=member_name, path=target_path)
 
-    @reraise_as(FailedToGetArchiveMembers)
     def get_members(self) -> list[ArchiveMember]:
-        with zipfile.ZipFile(file=self.path, mode="r") as zip_file:
+        with zipfile.ZipFile(file=self._path, mode="r") as zip_file:
             return [
                 ArchiveMember(
                     name=zip_info.filename,
@@ -43,14 +34,16 @@ class ZipArchive(AbstractArchive):
                 for zip_info in zip_file.infolist()
             ]
 
-    @reraise_as(FailedToAddNewMemberToArchive)
     def add_member(self, member_path: str | Path):
-        with zipfile.ZipFile(file=self.path, mode="a") as zip_file:
+        member_path = Path(member_path)
+        if not member_path.exists():
+            raise FileNotFoundError()
+
+        with zipfile.ZipFile(file=self._path, mode="a") as zip_file:
             zip_file.write(
                 filename=member_path, arcname=Path(member_path).name
             )
 
-    @reraise_as(FailedToRemoveArchiveMember)
     def remove_member(self, member_name: str):
         if self.get_member(member_name) is None:
             raise ArchiveMemberDoesNotExist()
@@ -78,7 +71,7 @@ class ZipArchive(AbstractArchive):
                 ) in temporary_directory_members_path.iterdir():
                     new_file.write(filename=file, arcname=file.name)
 
-            new_archive_path.rename(self.path)
+            new_archive_path.rename(self._path)
 
 
 """     @staticmethod

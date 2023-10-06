@@ -3,15 +3,8 @@ from pathlib import Path
 
 import py7zr
 
-from archive.exceptions import (
-    ArchiveMemberDoesNotExist,
-    FailedToAddNewMemberToArchive,
-    FailedToExtractArchiveMember,
-    FailedToGetArchiveMembers,
-    FailedToRemoveArchiveMember,
-)
-from archive.models import AbstractArchive, ArchiveMember
-from archive.utils import reraise_as
+from filepack.archives.exceptions import ArchiveMemberDoesNotExist
+from filepack.archives.models import AbstractArchive, ArchiveMember
 
 
 class SevenZipArchive(AbstractArchive):
@@ -21,11 +14,6 @@ class SevenZipArchive(AbstractArchive):
     ):
         self._path = path
 
-    @property
-    def path(self) -> Path:
-        return self._path
-
-    @reraise_as(FailedToExtractArchiveMember)
     def extract_member(
         self, member_name: str, target_path: str | Path
     ):
@@ -33,16 +21,15 @@ class SevenZipArchive(AbstractArchive):
             raise ArchiveMemberDoesNotExist()
 
         with py7zr.SevenZipFile(
-            file=self.path, mode="r"
+            file=self._path, mode="r"
         ) as seven_zip_file:
             seven_zip_file.extract(
                 targets=[member_name], path=target_path
             )
 
-    @reraise_as(FailedToGetArchiveMembers)
     def get_members(self) -> list[ArchiveMember]:
         with py7zr.SevenZipFile(
-            file=self.path, mode="r"
+            file=self._path, mode="r"
         ) as seven_zip_file:
             return [
                 ArchiveMember(
@@ -53,20 +40,18 @@ class SevenZipArchive(AbstractArchive):
                 for seven_zip_info in seven_zip_file.list()
             ]
 
-    @reraise_as(FailedToAddNewMemberToArchive)
-    def add_member(self, member_path: Path):
+    def add_member(self, member_path: str | Path):
         member_path = Path(member_path)
         if not member_path.exists():
             raise FileNotFoundError()
 
         with py7zr.SevenZipFile(
-            file=self.path, mode="a"
+            file=self._path, mode="a"
         ) as seven_zip_file:
             seven_zip_file.write(
                 file=member_path, arcname=member_path.name
             )
 
-    @reraise_as(FailedToRemoveArchiveMember)
     def remove_member(self, member_name: str):
 
         if self.get_member(member_name=member_name) is None:
@@ -96,4 +81,4 @@ class SevenZipArchive(AbstractArchive):
                 ) in temporary_directory_members_path.iterdir():
                     new_file.write(file=file, arcname=file.name)
 
-            new_archive_path.rename(self.path)
+            new_archive_path.rename(self._path)
