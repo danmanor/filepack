@@ -55,7 +55,6 @@ class TarArchive(AbstractArchive):
             tar_file.add(name=member_path, arcname=member_path.name)
 
     def remove_member(self, member_name: str):
-
         if self.get_member(member_name=member_name) is None:
             raise ArchiveMemberDoesNotExist()
 
@@ -87,8 +86,8 @@ class TarArchive(AbstractArchive):
     def _get_tar_info_file_type(
         self, tar_info: tarfile.TarInfo
     ) -> str | UnknownFileType:
-        with tempfile.NamedTemporaryFile() as temporary_file:
-            temporary_file_path = Path(temporary_file) / tar_info.name
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            temporary_file_path = Path(temporary_directory) / tar_info.name
             self.extract_member(
                 member_name=tar_info.name,
                 target_path=temporary_file_path,

@@ -21,14 +21,31 @@ classifiers = [
 dependencies = [
     "py7zr>=0.20.6",
     "tabulate==0.9.0",
+    "types-tabulate==0.9.0.3",
     "rarfile==4.1",
     "pytz==2023.3.post1",
+    "types-pytz==2023.3.1.1",
     "lz4==4.3.2",
+    "filetype==1.2.0",
 ]
 
 [project.urls]
 "Repository" = "https://github.com/danmanor/archive"
 "Bug Tracker" = "https://github.com/danmanor/archive/issues"
+
+[project.optional-dependencies]
+test-runner = [
+    "tox==4.11.3",
+]
+test = [
+    "pytest==7.4.2",
+]
+lint = [
+    "black==23.9.1",
+    "isort==5.12.0",
+    "mypy==1.5.1",
+    "flake8==6.1.0",
+]
 
 [tool.mypy]
 python_version = "3.11"
@@ -46,3 +63,14 @@ line_length = 70
 
 [tool.flake8]
 ignore = ['E501']
+
+[tool.tox]
+legacy_tox_ini = """
+    [tox]
+    envlist = py311
+
+    [testenv]
+    usedevelop=True
+    commands = pytest tests
+    deps = .[test]
+"""

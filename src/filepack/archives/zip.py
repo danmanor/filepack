@@ -83,9 +83,9 @@ class ZipArchive(AbstractArchive):
     def _get_zip_info_file_type(
         self, zip_info: zipfile.ZipInfo
     ) -> str | UnknownFileType:
-        with tempfile.NamedTemporaryFile() as temporary_file:
+        with tempfile.TemporaryDirectory() as temporary_directory:
             temporary_file_path = (
-                Path(temporary_file) / zip_info.filename
+                Path(temporary_directory) / zip_info.filename
             )
             self.extract_member(
                 member_name=zip_info.filename,

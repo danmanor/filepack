@@ -61,7 +61,6 @@ class SevenZipArchive(AbstractArchive):
             )
 
     def remove_member(self, member_name: str):
-
         if self.get_member(member_name=member_name) is None:
             raise ArchiveMemberDoesNotExist()
 
@@ -94,9 +93,9 @@ class SevenZipArchive(AbstractArchive):
     def _get_seven_zip_info_file_type(
         self, seven_zip_info: py7zr.FileInfo
     ) -> str | UnknownFileType:
-        with tempfile.NamedTemporaryFile() as temporary_file:
+        with tempfile.TemporaryDirectory() as temporary_directory:
             temporary_file_path = (
-                Path(temporary_file) / seven_zip_info.filename
+                Path(temporary_directory) / seven_zip_info.filename
             )
             self.extract_member(
                 member_name=seven_zip_info.filename,
