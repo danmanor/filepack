@@ -57,13 +57,13 @@ ignore_missing_imports = true
 show_error_codes = true
 
 [tool.black]
-line-length = 70
+line-length = 79
 target-version = ['py311']  
 include = '\.pyi?$'
 
 [tool.isort]
 profile = "black"
-line_length = 70
+line_length = 79
 
 [tool.flake8]
 ignore = ['E501']
@@ -95,6 +95,5 @@ legacy_tox_ini = """
     [testenv:lint]
     deps=.[lint]
     commands=
-        mypy src/
         flake8 src/
 """

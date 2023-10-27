@@ -48,9 +48,7 @@ class AbstractCompression(ABC):
 
     @property
     def compression_ratio(self) -> str:
-        ratio = round(
-            self.uncompressed_size / self.compressed_size, 2
-        )
+        ratio = round(self.uncompressed_size / self.compressed_size, 2)
         return f"{ratio}:1"
 
     @abstractmethod
@@ -66,12 +64,8 @@ class AbstractCompression(ABC):
         if not self.is_compressed():
             raise FileNotCompressed()
 
-        with self._open(
-            file_path=self._path, mode="rb"
-        ) as compressed_file:
-            with open(
-                file=target_path, mode="wb"
-            ) as decompressed_file:
+        with self._open(file_path=self._path, mode="rb") as compressed_file:
+            with open(file=target_path, mode="wb") as decompressed_file:
                 shutil.copyfileobj(
                     fsrc=compressed_file, fdst=decompressed_file
                 )
@@ -96,9 +90,6 @@ class AbstractCompression(ABC):
 
     def is_compressed(self) -> bool:
         try:
-            return (
-                get_file_type_extension(path=self._path)
-                == self._suffix
-            )
+            return get_file_type_extension(path=self._path) == self._suffix
         except Exception:
             return False

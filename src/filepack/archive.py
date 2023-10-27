@@ -30,16 +30,12 @@ class Archive:
 
         if not self._path.exists():
             try:
-                self._type = ArchiveType(
-                    self._path.suffix.lstrip(".")
-                )
+                self._type = ArchiveType(self._path.suffix.lstrip("."))
             except Exception:
                 raise ValueError(ERROR_MESSAGE_NOT_SUPPORTED)
 
         else:
-            self._type = ArchiveType(
-                get_file_type_extension(path=self._path)
-            )
+            self._type = ArchiveType(get_file_type_extension(path=self._path))
 
         self._instance: AbstractArchive
 

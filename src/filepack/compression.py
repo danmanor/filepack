@@ -10,10 +10,7 @@ from filepack.compressions.exceptions import (
 )
 from filepack.compressions.gzip import GzipCompression
 from filepack.compressions.lz4 import LZ4Compression
-from filepack.compressions.models import (
-    AbstractCompression,
-    CompressionType,
-)
+from filepack.compressions.models import AbstractCompression, CompressionType
 from filepack.compressions.xz import XZCompression
 from filepack.consts import ERROR_MESSAGE_NOT_SUPPORTED
 from filepack.utils import get_file_type_extension, reraise_as
@@ -28,9 +25,7 @@ class Compression:
 
         if not self._path.exists():
             try:
-                self._type = CompressionType(
-                    self._path.suffix.lstrip(".")
-                )
+                self._type = CompressionType(self._path.suffix.lstrip("."))
             except Exception:
                 raise ValueError(ERROR_MESSAGE_NOT_SUPPORTED)
 

@@ -59,6 +59,14 @@ class AbstractArchive(ABC):
     def remove_member(self, member_name: str):
         pass
 
+    @abstractmethod
+    def get_member(self, member_name: str) -> Optional[ArchiveMember]:
+        pass
+
+    @abstractmethod
+    def member_exist(self, member_name: str) -> bool:
+        pass
+
     def extract_all(self, target_path: str | Path):
         for member in self.get_members():
             self.extract_member(
@@ -68,12 +76,6 @@ class AbstractArchive(ABC):
     def remove_all(self):
         for member in self.get_members():
             self.remove_member(member=member)
-
-    def get_member(self, member_name: str) -> Optional[ArchiveMember]:
-        for member in self.get_members():
-            if member.name == member_name:
-                return member
-        return None
 
     def get_members_name(self) -> list[str]:
         return [member.name for member in self.get_members()]
@@ -88,8 +90,4 @@ class AbstractArchive(ABC):
             }
             for member in self.get_members()
         ]
-        print(
-            tabulate(
-                members_metadata, headers="keys", tablefmt="grid"
-            )
-        )
+        print(tabulate(members_metadata, headers="keys", tablefmt="grid"))

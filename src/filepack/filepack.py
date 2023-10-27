@@ -76,9 +76,7 @@ class FilePack:
 
     @ensure_instance("_archive_instance")
     def get_member(self, member_name: str) -> Optional[ArchiveMember]:
-        return self._archive_instance.get_member(
-            member_name=member_name
-        )
+        return self._archive_instance.get_member(member_name=member_name)
 
     @ensure_instance("_archive_instance")
     def get_members_name(self) -> list[str]:

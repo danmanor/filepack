@@ -18,9 +18,7 @@ def reraise_as(
             try:
                 return func(*args, **kwargs)
             except Exception as e:
-                raise exception_class(
-                    f"an error occurred: {str(e)}"
-                ) from e
+                raise exception_class(f"an error occurred: {str(e)}") from e
 
         return wrapper
 
@@ -30,9 +28,7 @@ def reraise_as(
 def ensure_instance(
     attribute: str,
 ) -> Callable[..., Callable[..., Any]]:
-    def ensure_instance(
-        func: Callable[..., Any]
-    ) -> Callable[..., Any]:
+    def ensure_instance(func: Callable[..., Any]) -> Callable[..., Any]:
         @wraps(func)
         def wrapper(self, *args: Any, **kwargs: Any) -> Any:
             instance = getattr(self, attribute, None)
@@ -45,9 +41,7 @@ def ensure_instance(
     return ensure_instance
 
 
-def format_date_tuple(
-    date_tuple: tuple[int, int, int, int, int, int]
-) -> str:
+def format_date_tuple(date_tuple: tuple[int, int, int, int, int, int]) -> str:
     israel_tz = pytz.timezone("Asia/Jerusalem")
     localized_dt = israel_tz.localize(datetime(*date_tuple))
 
