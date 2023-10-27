@@ -87,7 +87,9 @@ class TarArchive(AbstractArchive):
         self, tar_info: tarfile.TarInfo
     ) -> str | UnknownFileType:
         with tempfile.TemporaryDirectory() as temporary_directory:
-            temporary_file_path = Path(temporary_directory) / tar_info.name
+            temporary_file_path = (
+                Path(temporary_directory) / tar_info.name
+            )
             self.extract_member(
                 member_name=tar_info.name,
                 target_path=temporary_file_path,

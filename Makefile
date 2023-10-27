@@ -1,32 +1,18 @@
-.PHONY: lint format check-format type-check test mypy install-lint install-test install
-
-install-lint:
-	pip install .[lint]
+.PHONY: format test install-test install
 
 install-test:
 	pip install .[test-runner]
+	pip install .[test]
+	pip install .[format]
+	pip install .[types]
+	pip install .[lint]
 
 install:
 	pip install .
 
-lint: check-format type-check
-	@echo "Linting code with flake8..."
-	flake8 src/filepack/
-
 format:
-	@echo "Formatting code with isort..."
-	isort src/filepack/
-	@echo "Formatting code with Black..."
-	black src/filepack/
-
-check-format:
-	@echo "Checking code format with Black..."
-	isort src/filepack/ --check --diff
-	black --check --diff src/filepack/
-
-type-check:
-	@echo "Type-checking with mypy..."
-	mypy src/filepack/
+	isort --profile black src/
+	black src/
 
 test:
 	tox

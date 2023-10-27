@@ -40,10 +40,14 @@ test-runner = [
 test = [
     "pytest==7.4.2",
 ]
-lint = [
+format = [
     "black==23.9.1",
     "isort==5.12.0",
+]
+types = [
     "mypy==1.5.1",
+]
+lint = [
     "flake8==6.1.0",
 ]
 
@@ -67,10 +71,30 @@ ignore = ['E501']
 [tool.tox]
 legacy_tox_ini = """
     [tox]
-    envlist = py311
+    envlist = 
+        py311
+        check-format
+        check-types
+        lint
 
     [testenv]
     usedevelop=True
-    commands = pytest tests
-    deps = .[test]
+    commands=pytest tests
+    deps=.[test]
+
+    [testenv:check-format]
+    deps=.[format]
+    commands=
+        isort --profile black --check-only --diff src/
+        black --diff --check src/
+    
+    [testenv:check-types]
+    deps=.[types]
+    commands=mypy src/
+
+    [testenv:lint]
+    deps=.[lint]
+    commands=
+        mypy src/
+        flake8 src/
 """
