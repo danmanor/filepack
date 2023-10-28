@@ -3,12 +3,12 @@ from typing import TextIO
 
 import lz4.frame
 
-from filepack.compressions.models import AbstractCompression
+from filepack.compressions.models import AbstractCompression, CompressionType
 
 
 class LZ4Compression(AbstractCompression):
     def __init__(self, path: Path) -> None:
-        super().__init__(path=path)
+        super().__init__(path=path, extension=CompressionType.LZ4.value)
 
     def _open(
         self,

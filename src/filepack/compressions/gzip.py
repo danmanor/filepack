@@ -2,12 +2,12 @@ import gzip
 from pathlib import Path
 from typing import TextIO
 
-from filepack.compressions.models import AbstractCompression
+from filepack.compressions.models import AbstractCompression, CompressionType
 
 
 class GzipCompression(AbstractCompression):
     def __init__(self, path: Path) -> None:
-        super().__init__(path=path)
+        super().__init__(path=path, extension=CompressionType.GZIP.value)
 
     def _open(
         self,

@@ -3,6 +3,7 @@ from typing import final
 
 from filepack.compressions.bzip2 import BzipCompression
 from filepack.compressions.exceptions import (
+    CompressionTypeNotSupported,
     FailedToCompressFile,
     FailedToDecompressFile,
     FailedToGetCompressedSize,
@@ -12,50 +13,16 @@ from filepack.compressions.gzip import GzipCompression
 from filepack.compressions.lz4 import LZ4Compression
 from filepack.compressions.models import AbstractCompression, CompressionType
 from filepack.compressions.xz import XZCompression
-from filepack.consts import ERROR_MESSAGE_NOT_SUPPORTED
-from filepack.utils import get_file_type_extension, reraise_as
+from filepack.utils import reraise_as
 
 
 @final
 class Compression:
     def __init__(self, path: Path) -> None:
-        self._path = path
-
         self._path = Path(path)
 
         if not self._path.exists():
-            try:
-                self._type = CompressionType(self._path.suffix.lstrip("."))
-            except Exception:
-                raise ValueError(ERROR_MESSAGE_NOT_SUPPORTED)
-
-        else:
-            self._type = CompressionType(
-                get_file_type_extension(path=self._path)
-            )
-
-        self._instance: AbstractCompression
-
-        match self._type:
-            case CompressionType.GZIP:
-                self._instance = GzipCompression(
-                    path=path,
-                )
-
-            case CompressionType.BZ2:
-                self._instance = BzipCompression(
-                    path=path,
-                )
-
-            case CompressionType.LZ4:
-                self._instance = LZ4Compression(
-                    path=path,
-                )
-
-            case CompressionType.XZ:
-                self._instance = XZCompression(
-                    path=path,
-                )
+            raise FileNotFoundError()
 
     @property
     def path(self) -> Path:
@@ -63,36 +30,89 @@ class Compression:
 
     @property
     def suffix(self) -> str:
-        return self._type.value
+        return self.path.suffix.lstrip(".")
 
-    @property
     @reraise_as(FailedToGetUncompressedSize)
-    def uncompressed_size(self) -> int:
-        return self._instance.uncompressed_size
+    def uncompressed_size(self, compression_algorithm: str) -> int:
+        compression_instance = self._get_compression_instance(
+            compression_algorithm=compression_algorithm
+        )
+        return compression_instance.uncompressed_size()
 
-    @property
     @reraise_as(FailedToGetCompressedSize)
-    def compressed_size(self) -> int:
-        return self._instance.compressed_size
+    def compressed_size(
+        self, compression_algorithm: str, compression_level: int | None = None
+    ) -> int:
+        compression_instance = self._get_compression_instance(
+            compression_algorithm=compression_algorithm,
+        )
+        return compression_instance.compressed_size(
+            compression_level=compression_level
+        )
 
-    @property
-    def compression_ratio(self) -> str:
-        return self._instance.compression_ratio
+    def compression_ratio(self, compression_algorithm: str) -> str:
+        compression_instance = self._get_compression_instance(
+            compression_algorithm=compression_algorithm
+        )
+        return compression_instance.compression_ratio()
 
     @reraise_as(FailedToDecompressFile)
-    def decompress(self, target_path: str | Path):
-        self._instance.decompress(target_path=target_path)
+    def decompress(
+        self, compression_algorithm: str, target_path: str | Path | None = None
+    ) -> Path:
+        compression_instance = self._get_compression_instance(
+            compression_algorithm=compression_algorithm
+        )
+        self._path = compression_instance.decompress(target_path=target_path)
+        return self._path
 
     @reraise_as(FailedToCompressFile)
     def compress(
         self,
-        target_path: Path = Path.cwd(),
+        compression_algorithm: str,
+        target_path: str | Path | None = None,
         compression_level: int = 9,
-    ):
-        self._instance.compress(
+    ) -> Path:
+        compression_instance = self._get_compression_instance(
+            compression_algorithm=compression_algorithm
+        )
+        self._path = compression_instance.compress(
             target_path=target_path,
             compression_level=compression_level,
         )
+        return self._path
 
-    def is_compressed(self) -> bool:
-        return self._instance.is_compressed()
+    def is_compressed(self, compression_algorithm: str) -> bool:
+        compression_instance = self._get_compression_instance(
+            compression_algorithm=compression_algorithm
+        )
+        return compression_instance.is_compressed()
+
+    def _get_compression_instance(
+        self, compression_algorithm: str
+    ) -> AbstractCompression:
+        try:
+            match CompressionType(compression_algorithm):
+                case CompressionType.GZIP:
+                    return GzipCompression(
+                        path=self.path,
+                    )
+
+                case CompressionType.BZ2:
+                    return BzipCompression(
+                        path=self.path,
+                    )
+
+                case CompressionType.LZ4:
+                    return LZ4Compression(
+                        path=self.path,
+                    )
+
+                case CompressionType.XZ:
+                    return XZCompression(
+                        path=self.path,
+                    )
+                case _:
+                    raise CompressionTypeNotSupported()
+        except Exception:
+            raise CompressionTypeNotSupported()

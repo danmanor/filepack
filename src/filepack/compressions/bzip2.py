@@ -2,12 +2,12 @@ import bz2
 from pathlib import Path
 from typing import TextIO
 
-from filepack.compressions.models import AbstractCompression
+from filepack.compressions.models import AbstractCompression, CompressionType
 
 
 class BzipCompression(AbstractCompression):
     def __init__(self, path: Path) -> None:
-        super().__init__(path=path)
+        super().__init__(path=path, extension=CompressionType.BZ2.value)
 
     def _open(
         self,

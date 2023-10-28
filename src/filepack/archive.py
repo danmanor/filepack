@@ -28,12 +28,14 @@ class Archive:
     def __init__(self, path: Path) -> None:
         self._path = Path(path)
 
+        # if doesn't exist, try to infer the desired type from the extension
         if not self._path.exists():
             try:
                 self._type = ArchiveType(self._path.suffix.lstrip("."))
             except Exception:
                 raise ValueError(ERROR_MESSAGE_NOT_SUPPORTED)
 
+        # if exist, get the type according to magic numbers
         else:
             self._type = ArchiveType(get_file_type_extension(path=self._path))
 
@@ -59,6 +61,9 @@ class Archive:
                 self._instance = SevenZipArchive(
                     path=path,
                 )
+
+            case _:
+                raise ValueError(ERROR_MESSAGE_NOT_SUPPORTED)
 
     @property
     def path(self) -> Path:

@@ -35,20 +35,23 @@ class FilePack:
     def suffix(self) -> str:
         return self.path.suffix.lstrip(".")
 
-    @property
     @ensure_instance("_compression_instance")
-    def uncompressed_size(self) -> int:
-        return self._compression_instance.uncompressed_size
+    def uncompressed_size(self, compression_algorithm: str) -> int:
+        return self._compression_instance.uncompressed_size(
+            compression_algorithm=compression_algorithm
+        )
 
-    @property
     @ensure_instance("_compression_instance")
-    def compressed_size(self) -> int:
-        return self._compression_instance.compressed_size
+    def compressed_size(self, compression_algorithm: str) -> int:
+        return self._compression_instance.compressed_size(
+            compression_algorithm=compression_algorithm
+        )
 
-    @property
     @ensure_instance("_compression_instance")
-    def compression_ratio(self) -> str:
-        return self._compression_instance.compression_ratio
+    def compression_ratio(self, compression_algorithm: str) -> str:
+        return self._compression_instance.compression_ratio(
+            compression_algorithm=compression_algorithm
+        )
 
     @ensure_instance("_archive_instance")
     def extract_member(self, target_path: Path):
@@ -87,20 +90,29 @@ class FilePack:
         self._archive_instance.print_members()
 
     @ensure_instance("_compression_instance")
-    def decompress(self, target_path: str | Path):
-        self._compression_instance.decompress(target_path=target_path)
+    def decompress(
+        self, compression_algorithm: str, target_path: str | Path | None = None
+    ):
+        self._compression_instance.decompress(
+            target_path=target_path,
+            compression_algorithm=compression_algorithm,
+        )
 
     @ensure_instance("_compression_instance")
     def compress(
         self,
-        target_path: Path = Path.cwd(),
+        compression_algorithm: str,
+        target_path: str | Path | None = None,
         compression_level: int = 9,
     ):
         self._compression_instance.compress(
             target_path=target_path,
             compression_level=compression_level,
+            compression_algorithm=compression_algorithm,
         )
 
     @ensure_instance("_compression_instance")
-    def is_compressed(self) -> bool:
-        return self._compression_instance.is_compressed()
+    def is_compressed(self, compression_algorithm: str) -> bool:
+        return self._compression_instance.is_compressed(
+            compression_algorithm=compression_algorithm
+        )

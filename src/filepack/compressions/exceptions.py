@@ -20,3 +20,7 @@ class FailedToDecompressFile(Exception):
 
 class FailedToCompressFile(Exception):
     pass
+
+
+class CompressionTypeNotSupported(Exception):
+    pass

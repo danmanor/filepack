@@ -1,5 +1,6 @@
 import os
 import shutil
+import tempfile
 from abc import ABC, abstractmethod
 from enum import Enum
 from pathlib import Path
@@ -25,71 +26,108 @@ class CompressionType(Enum):
 
 
 class AbstractCompression(ABC):
-    def __init__(self, path: Path) -> None:
+    def __init__(self, path: Path, extension: str) -> None:
         self._path = path
         self._suffix = path.suffix.lstrip(".")
         self._dot_suffix = path.suffix
+        self._extension = extension
 
-    @property
     def uncompressed_size(self) -> int:
         if not self.is_compressed():
             return self._path.stat().st_size
 
-        with self._open(file_path=self._path, mode="rb") as file:
-            file.seek(0, os.SEEK_END)
-            return file.tell()
+        with tempfile.NamedTemporaryFile() as temporary_file:
+            self.decompress(target_path=temporary_file.name)
+            return Path(temporary_file.name).stat().st_size
 
-    @property
-    def compressed_size(self) -> int:
+    def compressed_size(self, compression_level: int | None = None) -> int:
         if not self.is_compressed():
-            raise FileNotCompressed()
+            if compression_level is None:
+                raise ValueError(
+                    (
+                        "Failed to infer the compressed size"
+                        "of an uncompressed file"
+                        "- need compression level"
+                    )
+                )
+            with tempfile.NamedTemporaryFile() as temporary_file:
+                self.compress(
+                    target_path=temporary_file.name,
+                    compression_level=compression_level,
+                )
+                return Path(temporary_file.name).stat().st_size
 
         return self._path.stat().st_size
 
-    @property
     def compression_ratio(self) -> str:
-        ratio = round(self.uncompressed_size / self.compressed_size, 2)
+        ratio = round(self.uncompressed_size() / self.compressed_size(), 2)
         return f"{ratio}:1"
 
     @abstractmethod
     def _open(
         self,
         file_path: str | Path,
-        mode: str = "r",
-        compression_level=9,
+        mode: str = "rb",
+        compression_level: int = 9,
     ):
         pass
 
-    def decompress(self, target_path: str | Path):
-        if not self.is_compressed():
-            raise FileNotCompressed()
-
-        with self._open(file_path=self._path, mode="rb") as compressed_file:
-            with open(file=target_path, mode="wb") as decompressed_file:
-                shutil.copyfileobj(
-                    fsrc=compressed_file, fdst=decompressed_file
-                )
-
     def compress(
         self,
-        target_path: Path = Path.cwd(),
+        target_path: str | Path | None = None,
         compression_level: int = 9,
-    ):
+    ) -> Path:
         if self.is_compressed():
             raise FileAlreadyCompressed()
 
-        with open(file=self._path, mode="rb") as uncompressed_file:
+        switch_files_flag = False
+        with tempfile.NamedTemporaryFile(delete=False) as temporary_file:
+            with open(file=self._path, mode="rb") as uncompressed_file:
+                if target_path is None:
+                    target_path = temporary_file.name
+                    switch_files_flag = True
+                with self._open(
+                    file_path=target_path,
+                    mode="wb",
+                    compression_level=compression_level,
+                ) as compressed_file:
+                    shutil.copyfileobj(
+                        fsrc=uncompressed_file, fdst=compressed_file
+                    )
+
+            if switch_files_flag:
+                os.remove(self._path)
+                self._path = Path(str(self._path) + "." + self._extension)
+                os.rename(src=temporary_file.name, dst=self._path)
+
+        return self._path
+
+    def decompress(self, target_path: str | Path | None = None) -> Path:
+        if not self.is_compressed():
+            raise FileNotCompressed()
+
+        switch_files_flag = False
+        with tempfile.NamedTemporaryFile(delete=False) as temporary_file:
             with self._open(
-                file_path=target_path,
-                mode="wb",
-                compression_level=compression_level,
+                file_path=self._path, mode="rb"
             ) as compressed_file:
-                shutil.copyfileobj(
-                    fsrc=uncompressed_file, fdst=compressed_file
-                )
+                if target_path is None:
+                    target_path = temporary_file.name
+                    switch_files_flag = True
+                with open(file=target_path, mode="wb") as decompressed_file:
+                    shutil.copyfileobj(
+                        fsrc=compressed_file, fdst=decompressed_file
+                    )
+
+            if switch_files_flag:
+                os.remove(self._path)
+                self._path = Path(self._path.parent / self._path.stem)
+                os.rename(src=temporary_file.name, dst=self._path)
+
+        return self._path
 
     def is_compressed(self) -> bool:
         try:
-            return get_file_type_extension(path=self._path) == self._suffix
-        except Exception:
+            return get_file_type_extension(self._path) == self._extension
+        except ValueError:
             return False
