@@ -36,7 +36,8 @@ pip install filepack
 | `path`                | Returns the path of the archive.                |
 | `suffix`              | Returns the archive's suffix.                   |
 | `extract_member`      | Extract a specific member.                      |
-| `get_members`         | Get a list of members.                          |
+| `get_member`          | Get member's metadata                           |
+| `get_members`         | Get a list of members metadata.                 |
 | `add_member`          | Add a member to the archive.                    |
 | `remove_member`       | Remove a member from the archive.               |
 | `extract_all`         | Extract all members.                            |
@@ -58,35 +59,17 @@ pip install filepack
 
 ## Usage
 
-### Working with Files
+### Working with Archives
 
 ```
 from filepack import FilePack
 
-pack = FilePack("path/to/your/file")
 
-# Check if the file is compressed
-is_compressed = pack.is_compressed()
-
-
-# Get uncompressed size
-size = pack.uncompressed_size
-
-
-# Compress and decompress files
-pack.compress(target_path="path/to/compressed/file")
-pack.decompress(target_path="path/to/uncompressed/file")
-```
-
-### Working with Archives
-
-```
-from filepack import Archive
-
-archive = Archive("path/to/archive")
+# if the given path can exist or not yet, but must refer to an archive.
+file_pack = FilePack("path/to/your/archive/file")
 
 # Extract a specific member
-archive.extract_member(target_path="path/to/target")
+archive.extract_member(target_path="path/to/target/directory")
 
 # Get a list of members
 members = archive.get_members()
@@ -106,23 +89,37 @@ archive.remove_all()
 # Print all members
 archive.print_members()
 ```
-
 ### Working with Compressions
-
 ```
-from filepack import Compression
+from filepack import FilePack
 
-compression = Compression("path/to/compressed_file")
 
-# Get compressed size
-compressed_size = compression.compressed_size
+# if the given path must exist, but can refer to a file which is compressed already or not.
+file_pack = FilePack("path/to/your/existed/file")
 
-# Get compression ratio
-ratio = compression.compression_ratio
+# Compressed or not
+is_compressed = file_pack.is_compressed(compression_algorithm="gz")
 
-# Compress and decompress files
-compression.compress(target_path="path/to/compressed/file")
-compression.decompress(target_path="path/to/uncompressed/file")
+# Get uncompressed size
+size = file_pack.uncompressed_size(compression_algorithm="gz")
+
+# Compress and decompress files in place
+new_path = file_pack.compress(compression_algorithm="gz") # with .gz
+new_path = file_pack.decompress(compression_algorithm="gz") # without .gz
+
+# Compress and decompress files into a different path
+new_path = file_pack.compress(target_path="path/to/compressed/file", compression_algorithm="gz")
+new_path = file_pack.decompress(target_path="path/to/uncompressed/file", compression_algorithm="gz")
+```
+### Working with Both
+```
+from filepack import FilePack
+
+
+file_pack = FilePack("path/to/your/archive/file")
+
+archive.add_member("path/to/member")
+new_path = file_pack.compress(compression_algorithm="gz")
 ```
 
 ## Error Handling
