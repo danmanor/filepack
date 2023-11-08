@@ -39,13 +39,11 @@ class ArchiveMember:
 
 
 class AbstractArchive(ABC):
-    @abstractmethod
-    def extract_member(
-        self,
-        member_name: str,
-        target_path: str | Path,
-    ):
-        pass
+    def __init__(self, path: Path, extension: str) -> None:
+        self._path = path
+        self._suffix = path.suffix.lstrip(".")
+        self._dot_suffix = path.suffix
+        self._extension = extension
 
     @abstractmethod
     def get_members(self) -> list[ArchiveMember]:
@@ -67,6 +65,14 @@ class AbstractArchive(ABC):
     def member_exist(self, member_name: str) -> bool:
         pass
 
+    @abstractmethod
+    def extract_member(
+        self,
+        member_name: str,
+        target_path: str | Path,
+    ):
+        pass
+
     def extract_all(self, target_path: str | Path):
         for member in self.get_members():
             self.extract_member(
@@ -74,8 +80,8 @@ class AbstractArchive(ABC):
             )
 
     def remove_all(self):
-        for member in self.get_members():
-            self.remove_member(member=member)
+        for member_name in self.get_members_name():
+            self.remove_member(member_name=member_name)
 
     def get_members_name(self) -> list[str]:
         return [member.name for member in self.get_members()]

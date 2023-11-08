@@ -45,8 +45,8 @@ class AbstractCompression(ABC):
             if compression_level is None:
                 raise ValueError(
                     (
-                        "Failed to infer the compressed size"
-                        "of an uncompressed file"
+                        "Failed to infer the compressed size "
+                        "of an uncompressed file "
                         "- need compression level"
                     )
                 )

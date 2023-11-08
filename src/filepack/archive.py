@@ -74,8 +74,10 @@ class Archive:
         return self._type.value
 
     @reraise_as(FailedToExtractArchiveMember)
-    def extract_member(self, target_path: Path):
-        self._instance.extract_all(target_path=target_path)
+    def extract_member(self, member_name: str, target_path: Path):
+        self._instance.extract_member(
+            member_name=member_name, target_path=target_path
+        )
 
     @reraise_as(FailedToGetArchiveMembers)
     def get_members(self) -> list[ArchiveMember]:

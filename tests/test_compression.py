@@ -1,16 +1,7 @@
 from pathlib import Path
-import pytest
 
 from filepack.compression import Compression
 
-
-@pytest.fixture
-def txt_file(tmp_path: Path) -> Path:
-    txt_file_path = tmp_path / "test.txt"
-    with open(txt_file_path, "w") as file:
-        file.write("This is a test text for compression.")
-    
-    return txt_file_path
 
 COMPRESSIONS_PATH = Path(__file__).parent / "compressions" / "compression_examples"
 
@@ -26,7 +17,7 @@ def test_gzip_compression_in_place(txt_file: Path):
     assert comp.compressed_size(compression_algorithm="gz") == compressed_size
 
     comp.decompress(compression_algorithm="gz")
-    assert comp.path.read_text() == "This is a test text for compression."
+    assert comp.path.read_text() == "Hello World !"
     assert comp.uncompressed_size(compression_algorithm="gz") == uncompressed_size_before
     assert comp.compressed_size(compression_algorithm="gz", compression_level = 9) == compressed_size
 
@@ -44,7 +35,7 @@ def test_bz2_compression_in_place(txt_file: Path):
     assert comp.compressed_size(compression_algorithm="bz2") == compressed_size
 
     comp.decompress(compression_algorithm="bz2")
-    assert comp.path.read_text() == "This is a test text for compression."
+    assert comp.path.read_text() == "Hello World !"
     assert comp.uncompressed_size(compression_algorithm="bz2") == uncompressed_size_before
     assert comp.compressed_size(compression_algorithm="bz2", compression_level=9) == compressed_size
 
@@ -61,7 +52,7 @@ def test_lz4_compression_in_place(txt_file: Path):
     assert comp.compressed_size(compression_algorithm="lz4") == compressed_size
 
     comp.decompress(compression_algorithm="lz4")
-    assert comp.path.read_text() == "This is a test text for compression."
+    assert comp.path.read_text() == "Hello World !"
     assert comp.uncompressed_size(compression_algorithm="lz4") == uncompressed_size_before
     assert comp.compressed_size(compression_algorithm="lz4", compression_level=9) == compressed_size
 
@@ -78,7 +69,7 @@ def test_xz_compression_in_place(txt_file: Path):
     assert comp.compressed_size(compression_algorithm="xz") == compressed_size
 
     comp.decompress(compression_algorithm="xz")
-    assert comp.path.read_text() == "This is a test text for compression."
+    assert comp.path.read_text() == "Hello World !"
     assert comp.uncompressed_size(compression_algorithm="xz") == uncompressed_size_before
     assert comp.compressed_size(compression_algorithm="xz", compression_level=9) == compressed_size
 
@@ -94,7 +85,7 @@ def test_gzip_compression_not_in_place(tmp_path: Path, txt_file: Path):
     comp_decompressed = Compression(compressed_path)
     comp_decompressed.decompress(target_path=decompressed_path, compression_algorithm="gz")
 
-    assert decompressed_path.read_text() == "This is a test text for compression."
+    assert decompressed_path.read_text() == "Hello World !"
 
 
 def test_bz2_compression_not_in_place(tmp_path: Path, txt_file: Path):
@@ -108,7 +99,7 @@ def test_bz2_compression_not_in_place(tmp_path: Path, txt_file: Path):
     comp_decompressed = Compression(compressed_path)
     comp_decompressed.decompress(target_path=decompressed_path, compression_algorithm="bz2")
 
-    assert decompressed_path.read_text() == "This is a test text for compression."
+    assert decompressed_path.read_text() == "Hello World !"
 
 
 def test_lz4_compression_not_in_place(tmp_path: Path, txt_file: Path):
@@ -122,7 +113,7 @@ def test_lz4_compression_not_in_place(tmp_path: Path, txt_file: Path):
     comp_decompressed = Compression(compressed_path)
     comp_decompressed.decompress(target_path=decompressed_path, compression_algorithm="lz4")
 
-    assert decompressed_path.read_text() == "This is a test text for compression."
+    assert decompressed_path.read_text() == "Hello World !"
 
 
 def test_xz_compression_not_in_place(tmp_path: Path, txt_file: Path):
@@ -136,7 +127,7 @@ def test_xz_compression_not_in_place(tmp_path: Path, txt_file: Path):
     comp_decompressed = Compression(compressed_path)
     comp_decompressed.decompress(target_path=decompressed_path, compression_algorithm="xz")
 
-    assert decompressed_path.read_text() == "This is a test text for compression."
+    assert decompressed_path.read_text() == "Hello World !"
 
 
 def test_gzip_decompression_from_examples(tmp_path: Path):

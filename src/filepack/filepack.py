@@ -42,9 +42,12 @@ class FilePack:
         )
 
     @ensure_instance("_compression_instance")
-    def compressed_size(self, compression_algorithm: str) -> int:
+    def compressed_size(
+        self, compression_algorithm: str, compression_level: int | None = None
+    ) -> int:
         return self._compression_instance.compressed_size(
-            compression_algorithm=compression_algorithm
+            compression_algorithm=compression_algorithm,
+            compression_level=compression_level,
         )
 
     @ensure_instance("_compression_instance")
@@ -54,8 +57,10 @@ class FilePack:
         )
 
     @ensure_instance("_archive_instance")
-    def extract_member(self, target_path: Path):
-        self._archive_instance.extract_all(target_path=target_path)
+    def extract_member(self, member_name: str, target_path: Path):
+        self._archive_instance.extract_member(
+            member_name=member_name, target_path=target_path
+        )
 
     @ensure_instance("_archive_instance")
     def get_members(self) -> list[ArchiveMember]:
@@ -93,10 +98,12 @@ class FilePack:
     def decompress(
         self, compression_algorithm: str, target_path: str | Path | None = None
     ):
-        self._compression_instance.decompress(
+        self._path = self._compression_instance.decompress(
             target_path=target_path,
             compression_algorithm=compression_algorithm,
         )
+
+        return self._path
 
     @ensure_instance("_compression_instance")
     def compress(
@@ -105,11 +112,13 @@ class FilePack:
         target_path: str | Path | None = None,
         compression_level: int = 9,
     ):
-        self._compression_instance.compress(
+        self._path = self._compression_instance.compress(
             target_path=target_path,
             compression_level=compression_level,
             compression_algorithm=compression_algorithm,
         )
+
+        return self._path
 
     @ensure_instance("_compression_instance")
     def is_compressed(self, compression_algorithm: str) -> bool:
