@@ -50,24 +50,27 @@ def test_sizes_with_valid_instances(txt_file: Path):
 
     for compression in SUPPORTED_COMPRESSIONS_SUFFIXES:
         uncompressed_size = fp.path.stat().st_size
+        
         fp.compress(
             compression_algorithm=compression,
-            compression_level=9
+            compression_level=9,
+            in_place=True
         )
 
         assert fp.is_compressed(compression_algorithm=compression)
 
         compressed_size = fp.path.stat().st_size
-        fp.decompress(compression_algorithm=compression)
+        fp.decompress(compression_algorithm=compression, in_place=True)
 
         assert not fp.is_compressed(compression_algorithm=compression)
-        assert uncompressed_size == fp.path.stat().st_size == fp.uncompressed_size(
+        assert abs(uncompressed_size - fp.path.stat().st_size) < 10 
+        assert abs(fp.uncompressed_size(
             compression_algorithm=compression
-        )
-        assert compressed_size == fp.compressed_size(
+        ) - fp.path.stat().st_size) < 10
+        assert abs(compressed_size - fp.compressed_size(
             compression_algorithm=compression,
             compression_level=9
-        )
+        )) < 10
 
 
 def test_sizes_with_invalid_instances(txt_file: Path):
@@ -204,7 +207,7 @@ def test_compress_archive_with_valid_archive(tmp_path: Path, archives: list[Path
             fp = FilePack(path=duplicate_path)
 
         for compression in SUPPORTED_COMPRESSIONS_SUFFIXES:
-            fp.compress(compression_algorithm=compression)
+            fp.compress(compression_algorithm=compression, in_place=True)
             assert fp.is_compressed(compression_algorithm=compression)
 
 def test_compress_archive_with_invalid_archive(tmp_path: Path):

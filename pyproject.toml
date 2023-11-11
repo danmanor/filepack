@@ -27,6 +27,8 @@ dependencies = [
     "types-pytz==2023.3.1.1",
     "lz4==4.3.2",
     "filetype==1.2.0",
+    "docopt==0.6.2",
+    "toml==0.10.2",
 ]
 
 [project.urls]
@@ -50,6 +52,9 @@ types = [
 lint = [
     "flake8==6.1.0",
 ]
+
+[project.scripts]
+filepack = "filepack.__main__:main"
 
 [tool.mypy]
 python_version = "3.11"
