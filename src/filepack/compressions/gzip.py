@@ -11,7 +11,7 @@ class GzipCompression(AbstractCompression):
     def __init__(self, path: Path) -> None:
         """Initializes the GzipCompression with the specified file path.
 
-        Args:     
+        Args:
             path: The file system path to the file.
         """
         super().__init__(path=path, extension=CompressionType.GZIP.value)
@@ -24,12 +24,12 @@ class GzipCompression(AbstractCompression):
     ) -> gzip.GzipFile | TextIO:
         """Opens a file with gzip compression.
 
-        Args:     
-            file_path: The path to the file.     
-            mode: The mode in which to open the file. Defaults to 'r' for reading.     
+        Args:
+            file_path: The path to the file.
+            mode: The mode in which to open the file. Defaults to 'r' for reading.
             compression_level: The compression level, defaults to 9 for maximum compression.
 
-        Returns:     
+        Returns:
             A GzipFile object that can be used to read or write to the file.
         """
         return gzip.open(

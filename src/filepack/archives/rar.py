@@ -34,7 +34,7 @@ class RarArchive(AbstractArchive):
     ):
         """Constructs a RarArchive object associated with the given path.
 
-        Args:     
+        Args:
             path: The filesystem path to the RAR archive.
         """
         self._path = path
@@ -44,12 +44,12 @@ class RarArchive(AbstractArchive):
     ):
         """Extracts a specific member from the RAR archive.
 
-        Args:     
-            member_name: The name of the member to extract. 
-            target_path: The filesystem path to extract the member to.           
+        Args:
+            member_name: The name of the member to extract.
+            target_path: The filesystem path to extract the member to.
             in_place: If True, the member will be removed from archive after
 
-        Raises:     
+        Raises:
             ArchiveMemberDoesNotExist: If the specified member does not exist in the archive.
         """
         if not self.member_exist(member_name=member_name):
@@ -64,10 +64,10 @@ class RarArchive(AbstractArchive):
     def get_member(self, member_name: str) -> Optional[ArchiveMember]:
         """Retrieves an archive member's metadata.
 
-        Args:     
+        Args:
             member_name: The name of the member to retrieve metadata for.
 
-        Returns:     
+        Returns:
             The metadata of the member if found, None otherwise.
         """
         with rarfile.RarFile(file=self._path, mode="r") as rar_file:
@@ -81,7 +81,7 @@ class RarArchive(AbstractArchive):
     def get_members(self) -> list[ArchiveMember]:
         """Retrieves metadata for all members in the RAR archive.
 
-        Returns:     
+        Returns:
             A list of ArchiveMember objects with metadata of all members.
         """
         with rarfile.RarFile(file=self._path, mode="r") as rar_file:
@@ -90,13 +90,14 @@ class RarArchive(AbstractArchive):
                 for rar_info in rar_file.infolist()
             ]
 
-    def add_member(self, member_path: str | Path):
+    def add_member(self, member_path: str | Path, in_place: bool = False):
         """Raises an exception as RAR archives do not support adding members.
 
-        Args:     
+        Args:
             member_path: The filesystem path to the file to be added.
+            in_place: If true, the member's path will be deleted after addition.
 
-        Raises:     
+        Raises:
             FailedToAddNewMemberToArchive: Always.
         """
         raise FailedToAddNewMemberToArchive(
@@ -106,10 +107,10 @@ class RarArchive(AbstractArchive):
     def remove_member(self, member_name: str):
         """Raises an exception as RAR archives do not support removing members.
 
-        Args:     
+        Args:
             member_name: The name of the member to remove.
 
-        Raises:     
+        Raises:
             FailedToRemoveArchiveMember: Always.
         """
         raise FailedToRemoveArchiveMember(
@@ -133,10 +134,10 @@ class RarArchive(AbstractArchive):
     ) -> str | UnknownFileType:
         """Determines the file type of a RAR archive member based on its information.
 
-        Args:     
+        Args:
             rar_info: The RarInfo object for the member.
 
-        Returns:     
+        Returns:
             The file type if known, or an instance of UnknownFileType if not.
         """
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -157,10 +158,10 @@ class RarArchive(AbstractArchive):
     ) -> ArchiveMember:
         """Converts RarInfo metadata to an ArchiveMember object.
 
-        Args:     
+        Args:
             rar_info: The RarInfo object to convert.
 
-        Returns:    
+        Returns:
             An object containing the member's metadata.
         """
         return ArchiveMember(

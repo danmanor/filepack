@@ -14,7 +14,7 @@ class FilePack:
         """Initializes the FilePack with the specified file path. It attempts to create instances of
         Archive and Compression classes based on the file type.
 
-        Args:     
+        Args:
             path: The file system path to the file.
         """
         self._path = Path(path)
@@ -39,7 +39,7 @@ class FilePack:
     def path(self) -> Path:
         """The path of the file associated with this FilePack instance.
 
-        Returns:     
+        Returns:
             The Path object of the file.
         """
         return self._path
@@ -48,20 +48,20 @@ class FilePack:
     def suffix(self) -> str:
         """The file suffix without the leading dot.
 
-        Returns:     
+        Returns:
             The file suffix as a string.
         """
         return self.path.suffix.lstrip(".")
 
     @ensure_instance("_compression_instance")
     def uncompressed_size(self, compression_algorithm: str) -> int:
-        """Returns the size of the uncompressed file 
+        """Returns the size of the uncompressed file
         for the specified compression algorithm.
 
-        Args:     
+        Args:
             compression_algorithm: The compression algorithm to use.
 
-        Returns:     
+        Returns:
             The size of the uncompressed file in bytes.
         """
         return self._compression_instance.uncompressed_size(
@@ -72,14 +72,14 @@ class FilePack:
     def compressed_size(
         self, compression_algorithm: str, compression_level: int | None = None
     ) -> int:
-        """Calculates the compressed size of the file, 
+        """Calculates the compressed size of the file,
         optionally with a specified compression level.
 
-        Args:     
-            compression_algorithm: The algorithm used for compression. 
+        Args:
+            compression_algorithm: The algorithm used for compression.
             compression_level: The level of compression to apply.
 
-        Returns:     
+        Returns:
             The size of the compressed file in bytes.
         """
         return self._compression_instance.compressed_size(
@@ -91,10 +91,10 @@ class FilePack:
     def compression_ratio(self, compression_algorithm: str) -> str:
         """Calculates the compression ratio for the file.
 
-        Args:     
+        Args:
             compression_algorithm: The algorithm used for compression.
 
-        Returns:     
+        Returns:
             A string representing the compression ratio.
         """
         return self._compression_instance.compression_ratio(
@@ -105,9 +105,9 @@ class FilePack:
     def extract_member(self, member_name: str, target_path: Path):
         """Extracts a specific member from an archive to a target path.
 
-        Args:     
-            member_name: The name of the member to extract. 
-            target_path: The target directory path where the member will be extracted. 
+        Args:
+            member_name: The name of the member to extract.
+            target_path: The target directory path where the member will be extracted.
             in_place: If True, the member will be removed from archive after extraction.
         """
         self._archive_instance.extract_member(
@@ -118,7 +118,7 @@ class FilePack:
     def get_members(self) -> list[ArchiveMember]:
         """Retrieves metadata for all members in the archive.
 
-        Returns:     
+        Returns:
             A list of ArchiveMember objects representing the members of the archive.
         """
         return self._archive_instance.get_members()
@@ -127,8 +127,8 @@ class FilePack:
     def add_member(self, member_path: str | Path, in_place: bool = False):
         """Adds a new member to the archive.
 
-        Args:     
-            member_path: The file system path to the member to add. 
+        Args:
+            member_path: The file system path to the member to add.
             in_place: If true, the member's path will be deleted after addition.
         """
         self._archive_instance.add_member(
@@ -139,7 +139,7 @@ class FilePack:
     def remove_member(self, member_name: str):
         """Removes a member from the archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to remove.
         """
         self._archive_instance.remove_member(member_name=member_name)
@@ -148,7 +148,7 @@ class FilePack:
     def extract_all(self, target_path: str | Path, in_place: bool = False):
         """Extracts all members from the archive to the specified target path.
 
-        Args:     
+        Args:
             target_path: The target directory path where the members will be extracted.
             in_place: If True, extract all files and remove archive.
         """
@@ -165,10 +165,10 @@ class FilePack:
     def get_member(self, member_name: str) -> Optional[ArchiveMember]:
         """Retrieves metadata of a specific member in the archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to retrieve metadata for.
 
-        Returns:     
+        Returns:
             An ArchiveMember object if the member exists, None otherwise.
         """
         return self._archive_instance.get_member(member_name=member_name)
@@ -177,7 +177,7 @@ class FilePack:
     def get_members_name(self) -> list[str]:
         """Retrieves the names of all members in the archive.
 
-        Returns:     
+        Returns:
             A list of names of all members in the archive.
         """
         return self._archive_instance.get_members_name()
@@ -196,12 +196,12 @@ class FilePack:
     ):
         """Decompresses the file using the specified compression algorithm.
 
-        Args:     
-            compression_algorithm: The algorithm used for decompression. 
-            target_path: The target path where the decompressed file will be saved. 
+        Args:
+            compression_algorithm: The algorithm used for decompression.
+            target_path: The target path where the decompressed file will be saved.
             in_place: If True, the file will be replaced with its new decompression.
 
-        Returns:     
+        Returns:
             The path to the decompressed file.
         """
         self._path = self._compression_instance.decompress(
@@ -222,13 +222,13 @@ class FilePack:
     ):
         """Compresses the file using the specified compression algorithm.
 
-        Args:     
-            compression_algorithm: The algorithm used for compression. 
-            target_path: The target path where the compressed file will be saved. 
-            in_place: If True, the file will be replaced with its new decompression.     
+        Args:
+            compression_algorithm: The algorithm used for compression.
+            target_path: The target path where the compressed file will be saved.
+            in_place: If True, the file will be replaced with its new decompression.
             compression_level: The level of compression to apply.
 
-        Returns:     
+        Returns:
             The path to the compressed file.
         """
         self._path = self._compression_instance.compress(
@@ -244,10 +244,10 @@ class FilePack:
     def is_compressed(self, compression_algorithm: str) -> bool:
         """Checks if the file is compressed with the specified algorithm.
 
-        Args:     
+        Args:
             compression_algorithm: The algorithm to check against.
 
-        Returns:     
+        Returns:
             True if the file is compressed with the specified algorithm, False otherwise.
         """
         return self._compression_instance.is_compressed(

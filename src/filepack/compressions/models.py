@@ -33,8 +33,8 @@ class AbstractCompression(ABC):
     def __init__(self, path: Path, extension: str) -> None:
         """Initializes an AbstractCompression with the path to the file and its extension.
 
-        Args:     
-            path: The filesystem path to the file.     
+        Args:
+            path: The filesystem path to the file.
             extension: The extension of the compressed file.
         """
         self._path = path
@@ -45,7 +45,7 @@ class AbstractCompression(ABC):
     def uncompressed_size(self) -> int:
         """Calculates the size of the uncompressed file.
 
-        Returns:     
+        Returns:
             The size of the uncompressed file in bytes.
         """
         if not self.is_compressed():
@@ -58,10 +58,10 @@ class AbstractCompression(ABC):
     def compressed_size(self, compression_level: int | None = None) -> int:
         """Calculates the size of the compressed file.
 
-        Args:     
+        Args:
             compression_level: The level of compression to use.
 
-        Returns:     
+        Returns:
             The size of the compressed file in bytes.
         """
         if not self.is_compressed():
@@ -85,7 +85,7 @@ class AbstractCompression(ABC):
     def compression_ratio(self) -> str:
         """Calculates the compression ratio.
 
-        Returns:     
+        Returns:
             The compression ratio as a string.
         """
         ratio = round(self.uncompressed_size() / self.compressed_size(), 2)
@@ -100,8 +100,8 @@ class AbstractCompression(ABC):
     ):
         """Opens the compression file with the given mode and compression level.
 
-        Args:     
-            file_path: The path to the file.     
+        Args:
+            file_path: The path to the file.
             mode: The mode in which to open the file.
             compression_level: The level of compression.
         """
@@ -115,12 +115,12 @@ class AbstractCompression(ABC):
     ) -> Path:
         """Compresses the file.
 
-        Args:     
+        Args:
             target_path: The target path where the compressed file will be saved.
             in_place: If True, the file will be replaced with its new compression.
             compression_level: The level of compression to use.
 
-        Returns:     
+        Returns:
             The path to the compressed file.
         """
         if self.is_compressed():
@@ -155,11 +155,11 @@ class AbstractCompression(ABC):
     ) -> Path:
         """Decompresses the file.
 
-        Args:     
+        Args:
             target_path: The target path where the decompressed file will be saved.
             in_place: If True, the file will be replaced with its new decompression.
 
-        Returns:     
+        Returns:
             The path to the decompressed file.
         """
         if not self.is_compressed():
@@ -186,7 +186,7 @@ class AbstractCompression(ABC):
     def is_compressed(self) -> bool:
         """Checks if the file is compressed.
 
-        Returns:     
+        Returns:
             True if the file is compressed, False otherwise.
         """
         try:

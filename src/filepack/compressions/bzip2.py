@@ -11,7 +11,7 @@ class BzipCompression(AbstractCompression):
     def __init__(self, path: Path) -> None:
         """Initializes the BzipCompression with the specified file path.
 
-        Args:     
+        Args:
             path: The file system path to the file.
         """
         super().__init__(path=path, extension=CompressionType.BZ2.value)
@@ -24,12 +24,12 @@ class BzipCompression(AbstractCompression):
     ) -> bz2.BZ2File | TextIO:
         """Opens a file with bzip2 compression.
 
-        Args:     
-            file_path: The path to the file.     
-            mode: The mode in which to open the file. Defaults to 'r' for reading.     
+        Args:
+            file_path: The path to the file.
+            mode: The mode in which to open the file. Defaults to 'r' for reading.
             compression_level: The compression level, defaults to 9 for maximum compression.
 
-        Returns:    
+        Returns:
             A BZ2File object that can be used to read or write to the file.
         """
         return bz2.open(

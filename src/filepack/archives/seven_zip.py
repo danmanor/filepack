@@ -35,12 +35,12 @@ class SevenZipArchive(AbstractArchive):
     ):
         """Extracts a specific member from the 7z archive.
 
-        Args:     
-            member_name: The name of the member to extract. 
-            target_path: The filesystem path to extract the member to.           
+        Args:
+            member_name: The name of the member to extract.
+            target_path: The filesystem path to extract the member to.
             in_place: If True, the member will be removed from archive after.
 
-        Raises:     
+        Raises:
             ArchiveMemberDoesNotExist: If the specified member does not exist in the archive.
         """
         if not self.member_exist(member_name=member_name):
@@ -55,10 +55,10 @@ class SevenZipArchive(AbstractArchive):
     def get_member(self, member_name: str) -> Optional[ArchiveMember]:
         """Retrieves an archive member's metadata.
 
-        Args:     
+        Args:
             member_name: The name of the member to retrieve metadata for.
 
-        Returns:     
+        Returns:
             The metadata of the member if found, None otherwise.
         """
         with py7zr.SevenZipFile(file=self._path, mode="r") as seven_zip_file:
@@ -76,7 +76,7 @@ class SevenZipArchive(AbstractArchive):
     def get_members(self) -> list[ArchiveMember]:
         """Retrieves metadata for all members in the 7z archive.
 
-        Returns:     
+        Returns:
             A list of ArchiveMember objects with metadata of all members.
         """
         with py7zr.SevenZipFile(file=self._path, mode="r") as seven_zip_file:
@@ -90,11 +90,11 @@ class SevenZipArchive(AbstractArchive):
     def add_member(self, member_path: str | Path, in_place: bool = False):
         """Adds a file to the 7z archive as a new member.
 
-        Args:     
-            member_path: The filesystem path to the file to be added. 
+        Args:
+            member_path: The filesystem path to the file to be added.
             in_place: If true, the member's path will be deleted after addition.
 
-        Raises:     
+        Raises:
             FileNotFoundError: If the file at member_path does not exist.
         """
         member_path = Path(member_path)
@@ -110,10 +110,10 @@ class SevenZipArchive(AbstractArchive):
     def remove_member(self, member_name: str):
         """Removes a member from the 7z archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to remove.
 
-        Raises:     
+        Raises:
             ArchiveMemberDoesNotExist: If the specified member does not exist in the archive.
         """
         if not self.member_exist(member_name=member_name):
@@ -144,10 +144,10 @@ class SevenZipArchive(AbstractArchive):
     def member_exist(self, member_name: str) -> bool:
         """Checks if a specific member exists in the 7z archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to check.
 
-        Returns:     
+        Returns:
             True if the member exists, False otherwise.
         """
         with py7zr.SevenZipFile(file=self._path, mode="r") as seven_zip_file:
@@ -161,10 +161,10 @@ class SevenZipArchive(AbstractArchive):
     ) -> str | UnknownFileType:
         """Determines the file type of a 7z archive member based on its information.
 
-        Args:     
+        Args:
             seven_zip_info: The FileInfo object for the member.
 
-        Returns:     
+        Returns:
             The file type if known, or an instance of UnknownFileType if not.
         """
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -187,10 +187,10 @@ class SevenZipArchive(AbstractArchive):
     ) -> ArchiveMember:
         """Converts FileInfo metadata to an ArchiveMember object.
 
-        Args:     
+        Args:
             seven_zip_info: The FileInfo object to convert.
 
-        Returns:     
+        Returns:
             An object containing the member's metadata.
         """
         return ArchiveMember(

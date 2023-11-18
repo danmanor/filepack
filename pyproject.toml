@@ -70,9 +70,6 @@ include = '\.pyi?$'
 profile = "black"
 line_length = 79
 
-[tool.flake8]
-ignore = ['E501']
-
 [tool.tox]
 legacy_tox_ini = """
     [tox]

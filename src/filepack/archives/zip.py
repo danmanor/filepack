@@ -26,10 +26,10 @@ class ZipArchive(AbstractArchive):
     def __init__(
         self,
         path: Path,
-    ):  
+    ):
         """Constructs a ZipArchive object associated with the given path.
 
-        Args:     
+        Args:
             path: The filesystem path to the ZIP archive.
         """
         self._path = path
@@ -39,12 +39,12 @@ class ZipArchive(AbstractArchive):
     ):
         """Extracts a specific member from the ZIP archive.
 
-        Args:     
-            member_name: The name of the member to extract. 
-            target_path: The filesystem path to extract the member to. 
+        Args:
+            member_name: The name of the member to extract.
+            target_path: The filesystem path to extract the member to.
             in_place: If True, the member will be removed from archive after extraction.
 
-        Raises:     
+        Raises:
             ArchiveMemberDoesNotExist: If the specified member does not exist in the archive.
         """
         if not self.member_exist(member_name=member_name):
@@ -59,10 +59,10 @@ class ZipArchive(AbstractArchive):
     def get_member(self, member_name: str) -> Optional[ArchiveMember]:
         """Retrieves an archive member's metadata.
 
-        Args:     
+        Args:
             member_name: The name of the member to retrieve metadata for.
 
-        Returns:     
+        Returns:
             The metadata of the member if found, None otherwise.
         """
         with zipfile.ZipFile(file=self._path, mode="r") as zip_file:
@@ -76,7 +76,7 @@ class ZipArchive(AbstractArchive):
     def get_members(self) -> list[ArchiveMember]:
         """Retrieves metadata for all members in the ZIP archive.
 
-        Returns:     
+        Returns:
             A list of ArchiveMember objects with metadata of all members.
         """
         with zipfile.ZipFile(file=self._path, mode="r") as zip_file:
@@ -88,11 +88,11 @@ class ZipArchive(AbstractArchive):
     def add_member(self, member_path: str | Path, in_place: bool = False):
         """Adds a file to the ZIP archive as a new member.
 
-        Args:     
-            member_path: The filesystem path to the file to be added. 
+        Args:
+            member_path: The filesystem path to the file to be added.
             in_place: If true, the member's path will be deleted after addition.
 
-        Raises:     
+        Raises:
             FileNotFoundError: If the file at member_path does not exist.
         """
         member_path = Path(member_path)
@@ -110,10 +110,10 @@ class ZipArchive(AbstractArchive):
     def remove_member(self, member_name: str):
         """Removes a member from the ZIP archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to remove.
 
-        Raises:     
+        Raises:
             ArchiveMemberDoesNotExist: If the specified member does not exist in the archive.
         """
         if not self.member_exist(member_name):
@@ -143,10 +143,10 @@ class ZipArchive(AbstractArchive):
     def member_exist(self, member_name: str) -> bool:
         """Checks if a specific member exists in the ZIP archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to check.
 
-        Returns:     
+        Returns:
             True if the member exists, False otherwise.
         """
         with zipfile.ZipFile(file=self._path, mode="r") as zip_file:
@@ -159,10 +159,10 @@ class ZipArchive(AbstractArchive):
     ) -> str | UnknownFileType:
         """Determines the file type of a ZIP archive member based on its information.
 
-        Args:     
+        Args:
             zip_info: The ZipInfo object for the member.
 
-        Returns:     
+        Returns:
             The file type if known, or an instance of UnknownFileType if not.
         """
         with tempfile.TemporaryDirectory() as temporary_directory:
@@ -183,10 +183,10 @@ class ZipArchive(AbstractArchive):
     ) -> ArchiveMember:
         """Converts ZipInfo metadata to an ArchiveMember object.
 
-        Args:     
+        Args:
             zip_info: The ZipInfo object to convert.
 
-        Returns:     
+        Returns:
             An object containing the member's metadata.
         """
         return ArchiveMember(

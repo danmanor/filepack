@@ -15,11 +15,11 @@ def reraise_as(
 ) -> Callable[..., Callable[..., Any]]:
     """A decorator that re- raises exceptions as a specified exception class.
 
-    Args:     
+    Args:
         exception_class: The class of the exception to raise.
 
-    Returns:     
-        A decorated function that, when it catches any exception, 
+    Returns:
+        A decorated function that, when it catches any exception,
         will re-raise it as the given exception_class with the original message and traceback.
     """
 
@@ -41,10 +41,10 @@ def ensure_instance(
 ) -> Callable[..., Callable[..., Any]]:
     """A decorator that ensures a class instance attribute is not None before calling the method.
 
-    Args:     
+    Args:
         attribute: The name of the attribute to check.
 
-    Returns:     
+    Returns:
         A decorated method that, before proceeding, checks if the specified instance
         attribute is not None. Raises OperationNotSupported if the attribute is None.
     """
@@ -65,10 +65,10 @@ def ensure_instance(
 def format_date_tuple(date_tuple: tuple[int, int, int, int, int, int]) -> str:
     """Formats a date tuple into a string in UTC timezone.
 
-    Args:     
+    Args:
         date_tuple: A tuple containing year, month, day, hour, minute, second.
 
-    Returns:     
+    Returns:
         A string representation of the date and time in UTC timezone.
     """
     israel_tz = pytz.timezone("Asia/Jerusalem")
@@ -82,13 +82,13 @@ def format_date_tuple(date_tuple: tuple[int, int, int, int, int, int]) -> str:
 def get_file_type_extension(path: Path) -> Optional[str]:
     """Determines the file type of a given file and returns its extension.
 
-    Args:     
+    Args:
         path: The filesystem path to the file.
 
-    Returns:     
+    Returns:
         The file extension if recognized, otherwise raises ValueError.
 
-    Raises:    
+    Raises:
          ValueError: If the file type is not recognized.
     """
     if (file_type := filetype.guess(path)) is None:
@@ -102,7 +102,7 @@ def get_logger(name: str, level: int) -> logging.Logger:
         name: logger's name.
         log_level: log level name: logger name.
 
-    Returns:     
+    Returns:
         formatted logger with name and level.
     """
     logger = logging.getLogger(name)

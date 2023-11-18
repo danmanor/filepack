@@ -11,7 +11,7 @@ class XZCompression(AbstractCompression):
     def __init__(self, path: Path) -> None:
         """Initializes the XZCompression with the specified file path.
 
-        Args:     
+        Args:
             path: The file system path to the file.
         """
         super().__init__(path=path, extension=CompressionType.XZ.value)
@@ -24,12 +24,12 @@ class XZCompression(AbstractCompression):
     ) -> lzma.LZMAFile | TextIO:
         """Opens a file with XZ compression.
 
-        Args:     
-            file_path: The path to the file.     
-            mode: The mode in which to open the file. Defaults to 'r'.     
+        Args:
+            file_path: The path to the file.
+            mode: The mode in which to open the file. Defaults to 'r'.
             compression_level: The compression level. If None, the default is used.
 
-        Returns:     
+        Returns:
             An LZMAFile object that can be used to read or write to the file.
         """
         return lzma.open(

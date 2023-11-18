@@ -6,16 +6,15 @@ from typing import Optional
 
 from tabulate import tabulate
 
-from filepack.utils import get_logger
-
-logger = get_logger(__name__, logging.INFO)
-
 from filepack.archives.consts import (
     RAR_SUFFIX,
     SEVEN_ZIP_SUFFIX,
     TAR_SUFFIX,
     ZIP_SUFFIX,
 )
+from filepack.utils import get_logger
+
+logger = get_logger(__name__, logging.INFO)
 
 
 class ArchiveType(Enum):
@@ -45,10 +44,10 @@ class ArchiveMember:
     ) -> None:
         """Initializes an ArchiveMember object with metadata.
 
-        Args:     
-            name: The name of the archive member.     
-            size: The size of the archive member in bytes.     
-            mtime: The modification time of the archive member.     
+        Args:
+            name: The name of the archive member.
+            size: The size of the archive member in bytes.
+            mtime: The modification time of the archive member.
             type: The type of the file or an instance of UnknownFileType if unknown.
         """
         self.name = name
@@ -63,8 +62,8 @@ class AbstractArchive(ABC):
     def __init__(self, path: Path, extension: str) -> None:
         """Initializes an AbstractArchive with the path to the archive and its extension.
 
-        Args:     
-            path: The filesystem path to the archive.     
+        Args:
+            path: The filesystem path to the archive.
             extension: The extension of the archive file.
         """
         self._path = path
@@ -81,8 +80,8 @@ class AbstractArchive(ABC):
     def add_member(self, member_path: str | Path, in_place: bool = False):
         """Adds a new member to the archive.
 
-        Args:     
-            member_path: The filesystem path of the member to add. 
+        Args:
+            member_path: The filesystem path of the member to add.
             in_place: If true, the member's path will be deleted after addition.
         """
         pass
@@ -91,7 +90,7 @@ class AbstractArchive(ABC):
     def remove_member(self, member_name: str):
         """Removes a member from the archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to remove.
         """
         pass
@@ -100,10 +99,10 @@ class AbstractArchive(ABC):
     def get_member(self, member_name: str) -> Optional[ArchiveMember]:
         """Retrieves metadata for a specific member in the archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to retrieve metadata for.
 
-        Returns:     
+        Returns:
             An ArchiveMember object if the member exists, None otherwise.
         """
         pass
@@ -112,10 +111,10 @@ class AbstractArchive(ABC):
     def member_exist(self, member_name: str) -> bool:
         """Checks whether a member exists in the archive.
 
-        Args:     
+        Args:
             member_name: The name of the member to check for existence.
 
-        Returns:     
+        Returns:
             True if the member exists, False otherwise.
         """
         pass
@@ -126,9 +125,9 @@ class AbstractArchive(ABC):
     ):
         """Extracts a specific member from the archive to a target path.
 
-        Args:     
-            member_name: The name of the member to extract. 
-            target_path: The target path where the member will be extracted. 
+        Args:
+            member_name: The name of the member to extract.
+            target_path: The target path where the member will be extracted.
             in_place: If True, the member will be removed from archive after extraction.
         """
         pass
@@ -136,8 +135,8 @@ class AbstractArchive(ABC):
     def extract_all(self, target_path: str | Path, in_place: bool = False):
         """Extracts all members from the archive to a target path.
 
-        Args:     
-            target_path: The target path where the members will be 
+        Args:
+            target_path: The target path where the members will be
             in_place: If True, extract all files and remove archive. extracted.
         """
         for member in self.get_members():
@@ -156,7 +155,7 @@ class AbstractArchive(ABC):
     def get_members_name(self) -> list[str]:
         """Retrieves a list of names of all members in the archive.
 
-        Returns:     
+        Returns:
             A list of member names.
         """
         return [member.name for member in self.get_members()]

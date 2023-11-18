@@ -12,7 +12,7 @@ class LZ4Compression(AbstractCompression):
     def __init__(self, path: Path) -> None:
         """Initializes the LZ4Compression with the specified file path.
 
-        Args:     
+        Args:
             path: The file system path to the file.
         """
         super().__init__(path=path, extension=CompressionType.LZ4.value)
@@ -25,12 +25,12 @@ class LZ4Compression(AbstractCompression):
     ) -> lz4.frame.LZ4FrameFile | TextIO:
         """Opens a file with LZ4 compression.
 
-        Args:     
-            file_path: The path to the file.     
-            mode: The mode in which to open the file. Defaults to 'r'.     
+        Args:
+            file_path: The path to the file.
+            mode: The mode in which to open the file. Defaults to 'r'.
             compression_level: The compression level, with 9 being the default high compression preset.
 
-        Returns:     
+        Returns:
             An LZ4FrameFile object that can be used to read or write to the file.
         """
         return lz4.frame.open(

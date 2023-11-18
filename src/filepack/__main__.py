@@ -1,30 +1,30 @@
 """A user-friendly interface for handling files, archives, and compressed files
 in Python.
 
-Usage:     
-    filepack    archive         (-t <type> | --type=<type>) 
+Usage:
+    filepack    archive         (-t <type> | --type=<type>)
                                 [-d <dst> | --dst=<dst>]
                                 [-i | --in-place]
-                                <file>...     
+                                <file>...
     filepack    extract         [-d<dst> | --dst=<dst>]
                                 <archive-path>
-    filepack    compress        (-t <type> | --type=<type>) 
-                                [-i | --in-place] 
-                                [-d<dst> | --dst=<dst>] 
-                                [-l <level> | --level=<level>] 
-                                <file-path> 
-    filepack    decompress      (-t <type> | --type=<type>) 
+    filepack    compress        (-t <type> | --type=<type>)
+                                [-i | --in-place]
+                                [-d<dst> | --dst=<dst>]
+                                [-l <level> | --level=<level>]
+                                <file-path>
+    filepack    decompress      (-t <type> | --type=<type>)
                                 [-i | --in- place]
-                                [-d <dst> | --dst=<dst>] 
-                                <file-path> 
-    filepack                    (-h | --help)     
+                                [-d <dst> | --dst=<dst>]
+                                <file-path>
+    filepack                    (-h | --help)
     filepack                    (-v | --version)
 
-Options:     
-    -h, --help                      Show this screen.     
-    -v, --version                   Show version.     
-    -t, --type=<type>               Archive/compression type.     
-    -d, --dst=<dst>                 The path of the new archive/compression.     
+Options:
+    -h, --help                      Show this screen.
+    -v, --version                   Show version.
+    -t, --type=<type>               Archive/compression type.
+    -d, --dst=<dst>                 The path of the new archive/compression.
     -l, --level=<level>             Compression level.
     -i, --in-place                  Replace the file with its new compression.
 """
