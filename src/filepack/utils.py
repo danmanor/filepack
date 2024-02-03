@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from functools import wraps
 from pathlib import Path
 from typing import Any, Callable, Optional, Type
+from string import Template
 
 import filetype
 import pytz
@@ -60,6 +61,30 @@ def ensure_instance(
         return wrapper
 
     return ensure_instance
+
+
+def with_log(
+    logger: logging.Logger, message_template: str
+) -> Callable[..., Callable[..., Any]]:
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(func)
+        def wrapper(self, *args: Any, **kwargs: Any):
+
+            returned_value = func(self, *args, **kwargs)
+
+            var_names = (varname for varname in func.__code__.co_varnames if varname != "self")
+            zipped = zip(var_names, args)
+            combined_args = {t[0] : t[1] for t in zipped}
+
+            template = Template(message_template)
+            formatted_message = template.safe_substitute(combined_args)
+
+            logger.info(formatted_message)
+            return returned_value
+
+        return wrapper
+
+    return decorator
 
 
 def format_date_tuple(date_tuple: tuple[int, int, int, int, int, int]) -> str:

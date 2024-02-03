@@ -11,9 +11,7 @@ from filepack.archives.models import (
     ArchiveMember,
     UnknownFileType,
 )
-from filepack.utils import get_file_type_extension, get_logger
-
-logger = get_logger(__name__, logging.INFO)
+from filepack.utils import get_file_type_extension
 
 
 class TarArchive(AbstractArchive):
@@ -46,9 +44,6 @@ class TarArchive(AbstractArchive):
 
         with tarfile.open(self._path, "r") as tar_file:
             tar_file.extract(member=member_name, path=target_path)
-            logger.info(
-                f"Successfully extracted {member_name} to {target_path}"
-            )
 
         if in_place:
             self.remove_member(member_name=member_name)

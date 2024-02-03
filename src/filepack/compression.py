@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import final
 
@@ -13,7 +14,9 @@ from filepack.compressions.gzip import GzipCompression
 from filepack.compressions.lz4 import LZ4Compression
 from filepack.compressions.models import AbstractCompression, CompressionType
 from filepack.compressions.xz import XZCompression
-from filepack.utils import reraise_as
+from filepack.utils import get_logger, reraise_as, with_log
+
+logger = get_logger(name=__name__, level=logging.INFO)
 
 
 @final
@@ -107,6 +110,10 @@ class Compression:
         return compression_instance.compression_ratio()
 
     @reraise_as(FailedToDecompressFile)
+    @with_log(
+        logger=logger,
+        message_template="Decompressed using {compression_algorithm} algorithm to {target_path}",
+    )
     def decompress(
         self,
         compression_algorithm: str,
@@ -135,6 +142,10 @@ class Compression:
         return self._path
 
     @reraise_as(FailedToCompressFile)
+    @with_log(
+        logger=logger,
+        message_template="Compressed using {compression_algorithm} algorithm and level {compression_level} to {target_path}",
+    )
     def compress(
         self,
         compression_algorithm: str,

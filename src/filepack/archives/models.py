@@ -12,9 +12,6 @@ from filepack.archives.consts import (
     TAR_SUFFIX,
     ZIP_SUFFIX,
 )
-from filepack.utils import get_logger
-
-logger = get_logger(__name__, logging.INFO)
 
 
 class ArchiveType(Enum):

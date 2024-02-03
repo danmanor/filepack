@@ -11,9 +11,7 @@ from filepack.archives.models import (
     ArchiveMember,
     UnknownFileType,
 )
-from filepack.utils import get_file_type_extension, get_logger
-
-logger = get_logger(__name__, logging.INFO)
+from filepack.utils import get_file_type_extension
 
 
 class SevenZipArchive(AbstractArchive):
