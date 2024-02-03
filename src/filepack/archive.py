@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Optional, final
 
@@ -21,14 +20,7 @@ from filepack.archives.seven_zip import SevenZipArchive
 from filepack.archives.tar import TarArchive
 from filepack.archives.zip import ZipArchive
 from filepack.consts import ERROR_MESSAGE_NOT_SUPPORTED
-from filepack.utils import (
-    get_file_type_extension,
-    get_logger,
-    reraise_as,
-    with_log,
-)
-
-logger = get_logger(name=__name__, level=logging.INFO)
+from filepack.utils import get_file_type_extension, reraise_as
 
 
 @final
@@ -101,10 +93,6 @@ class Archive:
         return self._type.value
 
     @reraise_as(FailedToExtractArchiveMember)
-    @with_log(
-        logger=logger,
-        message_template="Extracted {member_name} to {target_path}",
-    )
     def extract_member(self, member_name: str, target_path: str | Path):
         """Extracts a specific member from the archive to a given target path.
 
@@ -132,10 +120,6 @@ class Archive:
         return self._instance.get_members()
 
     @reraise_as(FailedToAddNewMemberToArchive)
-    @with_log(
-        logger=logger,
-        message_template="Added member in {member_path} to archive",
-    )
     def add_member(self, member_path: str | Path, in_place: bool = False):
         """Adds a new member to the archive.
 
@@ -151,10 +135,6 @@ class Archive:
         )
 
     @reraise_as(FailedToRemoveArchiveMember)
-    @with_log(
-        logger=logger,
-        message_template="Removed member {member_name} from archive",
-    )
     def remove_member(self, member_name: str):
         """Removes a member from the archive.
 
@@ -167,10 +147,6 @@ class Archive:
         self._instance.remove_member(member_name=member_name)
 
     @reraise_as(FailedToExtractArchiveMembers)
-    @with_log(
-        logger=logger,
-        message_template="Extracted member archive contents to {target_path}",
-    )
     def extract_all(self, target_path: str | Path, in_place: bool = False):
         """Extracts all members from the archive to the specified target path.
 
@@ -186,9 +162,6 @@ class Archive:
         )
 
     @reraise_as(FailedToRemoveArchiveMembers)
-    @with_log(
-        logger=logger, message_template="Removed all contents from archive"
-    )
     def remove_all(self):
         """Removes all members from the archive.
 
