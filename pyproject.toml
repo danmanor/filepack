@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "filepack"
 version = "0.1.0"
-description = ""
+description = "A user-friendly interface for handling files, archives, and compressed files in Python"
 requires-python=">=3.11.0"
 authors = [
     { name = "Dan Manor", email = "danmanor11@gmail.com" }
@@ -32,8 +32,8 @@ dependencies = [
 ]
 
 [project.urls]
-"Repository" = "https://github.com/danmanor/archive"
-"Bug Tracker" = "https://github.com/danmanor/archive/issues"
+"Repository" = "https://github.com/danmanor/filepack"
+"Bug Tracker" = "https://github.com/danmanor/filepack/issues"
 
 [project.optional-dependencies]
 test-runner = [
@@ -63,7 +63,7 @@ show_error_codes = true
 
 [tool.black]
 line-length = 79
-target-version = ['py311']  
+target-version = ['py311']
 include = '\.pyi?$'
 
 [tool.isort]
@@ -73,7 +73,7 @@ line_length = 79
 [tool.tox]
 legacy_tox_ini = """
     [tox]
-    envlist = 
+    envlist =
         py311
         check-format
         check-types
@@ -89,7 +89,7 @@ legacy_tox_ini = """
     commands=
         isort --profile black --check-only --diff src/
         black --diff --check src/
-    
+
     [testenv:check-types]
     deps=.[types]
     commands=mypy src/
